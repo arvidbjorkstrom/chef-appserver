@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: laravelserver
+# Cookbook Name:: appserver
 # Recipe:: webserver
 #
 

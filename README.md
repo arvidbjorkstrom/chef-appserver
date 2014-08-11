@@ -1,4 +1,4 @@
-# laravelserver
+# Appserver
 
 ## Description
 
@@ -20,7 +20,7 @@ recipes should run on these platforms without error:
 * [git](http://community.opscode.com/cookbooks/git) Opscode LWRP Cookbook
 * [mysql](http://community.opscode.com/cookbooks/mysql) Opscode LWRP Cookbook
 * [database](http://community.opscode.com/cookbooks/database) Opscode LWRP Cookbook
-* [nginx](https://github.com/phlipper/chef-nginx) cookbook ny Phil Cohen
+* [nginx](https://github.com/phlipper/chef-nginx) cookbook by Phil Cohen
 * [timezone-ii](http://community.opscode.com/cookbooks/timezone-ii) cookbook by Lawrence Gilbert
 
 ### Chef
