@@ -2,7 +2,9 @@
 # Cookbook Name:: chef-appserver
 # Recipe:: default
 #
-# Copyright 2014, YOUR_COMPANY_NAME
-#
-# All rights reserved - Do Not Redistribute
-#
+
+include_recipe 'timezone-ii'
+include_recipe 'apt'
+include_recipe 'git'
+include_recipe 'appserver::dbserver'
+include_recipe 'appserver::webserver'

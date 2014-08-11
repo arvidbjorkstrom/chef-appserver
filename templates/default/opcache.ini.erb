@@ -1,0 +1,11 @@
+; configuration for php ZendOpcache module
+; priority=05
+zend_extension=opcache.so
+
+opcache.enable=<%= node['opcache']['enabled'] %>
+opcache.memory_consumption=<%= node['opcache']['memory_consumption'] %>
+opcache.interned_strings_buffer=<%= node['opcache']['interned_strings_buffer'] %>
+opcache.max_accelerated_files=<%= node['opcache']['max_accelerated_files'] %>
+opcache.revalidate_freq=<%= node['opcache']['revalidate_freq'] %>
+opcache.fast_shutdown=<%= node['opcache']['fast_shutdown'] %>
+opcache.enable_cli=<%= node['opcache']['enable_cli'] %>

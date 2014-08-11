@@ -1,68 +1,115 @@
-chef-appserver Cookbook
-=======================
-TODO: Enter the cookbook description here.
+# laravelserver
 
-e.g.
-This cookbook makes your favorite breakfast sandwich.
+## Description
 
-Requirements
-------------
-TODO: List your cookbook requirements. Be sure to include any requirements this cookbook has on platforms, libraries, other cookbooks, packages, operating systems, etc.
+Install and configure server for a modern php framework with nginx, php-fpm, MySQL and Opcache.
 
-e.g.
-#### packages
-- `toaster` - chef-appserver needs toaster to brown your bagel.
 
-Attributes
-----------
-TODO: List your cookbook attributes here.
+## Requirements
 
-e.g.
-#### chef-appserver::default
-<table>
-  <tr>
-    <th>Key</th>
-    <th>Type</th>
-    <th>Description</th>
-    <th>Default</th>
-  </tr>
-  <tr>
-    <td><tt>['chef-appserver']['bacon']</tt></td>
-    <td>Boolean</td>
-    <td>whether to include bacon</td>
-    <td><tt>true</tt></td>
-  </tr>
-</table>
+### Supported Plattforms
 
-Usage
------
-#### chef-appserver::default
-TODO: Write usage instructions for each cookbook.
+The following platforms are supported by this cookbook, meaning that the
+recipes should run on these platforms without error:
 
-e.g.
-Just include `chef-appserver` in your node's `run_list`:
+* Ubuntu 14.04
 
-```json
-{
-  "name":"my_node",
-  "run_list": [
-    "recipe[chef-appserver]"
-  ]
-}
+### Cookbooks
+
+* [apt](http://community.opscode.com/cookbooks/apt) Opscode LWRP Cookbook
+* [git](http://community.opscode.com/cookbooks/git) Opscode LWRP Cookbook
+* [mysql](http://community.opscode.com/cookbooks/mysql) Opscode LWRP Cookbook
+* [database](http://community.opscode.com/cookbooks/database) Opscode LWRP Cookbook
+* [nginx](https://github.com/phlipper/chef-nginx) cookbook ny Phil Cohen
+* [timezone-ii](http://community.opscode.com/cookbooks/timezone-ii) cookbook by Lawrence Gilbert
+
+### Chef
+
+It is recommended to use a version of Chef `>= 11.12.4` as that is the target of my usage and testing, though it will probably work with older versions as well.
+
+### Ruby
+
+This cookbook requires Ruby 1.9+ and is tested against:
+
+* 1.9.3
+* 2.0.0
+* 2.1.2
+
+
+## Recipes
+
+* `appserver` - Installs and configures the server via the internal recipes.
+* `appserver::dbserver` - Internal recipe to setup mysql and import any supplied sql dump
+* `appserver::webserver` - Internal recipe to setup php, php-fpm, composer and nginx.
+
+
+## Usage
+
+Nothing here yet.
+
+
+## Attributes
+
+```ruby
+
+# Timezone
+default['tz'] = "Europe/Stockholm"
+
+# MySQL
+default['mysql']['server_root_username'] = 'root'
+default['mysql']['server_root_password'] = 'YouShouldReplaceThis'
+default['mysql']['server_debian_password'] = 'YouShouldReplaceThis'
+
+default['mysql']['databases'] = [
+  {
+    "database" => "dbname",
+    "username" => "dbuser",
+    "password" => "dbpass",
+    "overwrite" => true
+  }
+]
+
+
+# NGINX
+default['nginx']['sites'] = [
+  {
+    "name" => "domain.se",
+    "host" => "domain.se www.domain.se",
+    "root" => "/var/www/example.se/public",
+    "index" => "index.php index.html index.htm",
+    "slashlocation" => "try_files $uri $uri/ /index.php?$query_string",
+    "phpfpm" => true,
+    "templatesource" => "serverblock.erb",
+    "templatecookbook" => "appserver",
+    "artisan_migrate" => true
+  }
+]
+
+# PHP
+default['php']['error_reporting'] = 'E_ALL'
+default['php']['display_errors'] = 'Off'
+default['php']['log_errors'] = 'On'
+default['php']['post_max_size'] = '96M'
+default['php']['upload_max_filesize'] = '64M'
+default['php']['max_file_uploads'] = '20'
+default['php']['memory_limit'] = '256M'
+
+# OPcache
+default['opcache']['enabled'] = '1'
+default['opcache']['memory_consumption'] = '128'
+default['opcache']['interned_strings_buffer'] = '8'
+default['opcache']['max_accelerated_files'] = '4000'
+default['opcache']['revalidate_freq'] = '60'
+default['opcache']['fast_shutdown'] = '1'
+default['opcache']['enable_cli'] = '1'
 ```
 
-Contributing
-------------
-TODO: (optional) If this is a public cookbook, detail the process for contributing. If this is a private cookbook, remove this section.
+## TODO
 
-e.g.
-1. Fork the repository on Github
-2. Create a named feature branch (like `add_component_x`)
-3. Write your change
-4. Write tests for your change (if applicable)
-5. Run the tests, ensuring they all pass
-6. Submit a Pull Request using Github
+Nothing here yet.
 
-License and Authors
--------------------
-Authors: TODO: List authors
+
+## License
+
+* Freely distributable and licensed under the [MIT license](http://arvid.mit-license.org/).
+* Copyright (c) 2012-2014 Arvid Björkström (arvid@bjorkstrom.se) [![endorse](https://api.coderwall.com/arvidbjorkstrom/endorsecount.png)](https://coderwall.com/arvidbjorkstrom)
