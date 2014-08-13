@@ -15,7 +15,6 @@ default['mysql']['databases'] = []
 # NGINX
 default['nginx']['sites'] = []
 
-
 # PHP
 # Default Value: E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED
 # Development Value: E_ALL

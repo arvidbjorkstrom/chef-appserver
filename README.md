@@ -53,7 +53,7 @@ Nothing here yet.
 ```ruby
 
 # Timezone
-default['tz'] = "Europe/Stockholm"
+default['tz'] = 'Europe/Stockholm'
 
 # MySQL
 default['mysql']['server_root_username'] = 'root'
@@ -62,10 +62,10 @@ default['mysql']['server_debian_password'] = 'YouShouldReplaceThis'
 
 default['mysql']['databases'] = [
   {
-    "database" => "dbname",
-    "username" => "dbuser",
-    "password" => "dbpass",
-    "overwrite" => true
+    'database' => 'dbname',
+    'username' => 'dbuser',
+    'password' => 'dbpass',
+    'overwrite' => true
   }
 ]
 
@@ -73,15 +73,16 @@ default['mysql']['databases'] = [
 # NGINX
 default['nginx']['sites'] = [
   {
-    "name" => "domain.se",
-    "host" => "domain.se www.domain.se",
-    "root" => "/var/www/example.se/public",
-    "index" => "index.php index.html index.htm",
-    "slashlocation" => "try_files $uri $uri/ /index.php?$query_string",
-    "phpfpm" => true,
-    "templatesource" => "serverblock.erb",
-    "templatecookbook" => "appserver",
-    "artisan_migrate" => true
+    'name' => 'domain.se',
+    'host' => 'domain.se www.domain.se',
+    'root' => '/var/www/example.se/public',
+    'listen' => '*.80',
+    'index' => 'index.php index.html index.htm',
+    'slashlocation' => 'try_files $uri $uri/ /index.php?$query_string',
+    'phpfpm' => true,
+    'templatesource' => 'serverblock.conf.erb',
+    'templatecookbook' => 'appserver',
+    'artisan_migrate' => true
   }
 ]
 
