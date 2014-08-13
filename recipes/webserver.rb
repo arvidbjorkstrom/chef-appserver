@@ -62,7 +62,7 @@ node['nginx']['sites'].each do |site|
     host site['host']
     root site['root']
     index site['index']
-    slashlocation site['location']
+    slashlocation site['slashlocation']
     phpfpm site['phpfpm']
     templatesource site['templatesource']
     templatecookbook site['templatecookbook']
