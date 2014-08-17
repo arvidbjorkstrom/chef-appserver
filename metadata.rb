@@ -17,3 +17,4 @@ depends 'mysql'
 depends 'database'
 depends 'nginx' # https://github.com/phlipper/chef-nginx
 depends 'timezone-ii'
+depends 'deployer'
