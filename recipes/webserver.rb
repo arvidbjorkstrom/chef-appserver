@@ -57,6 +57,17 @@ end
 include_recipe 'nginx::server'
 
 node['nginx']['sites'].each do |site|
+  if site['git']
+    git site['git_path'] do
+      repository site['git_repo']
+      revision site['git_branch']
+      action :sync
+      user "deploy"
+      group "root"
+      notifies :restart, 'service[php-fpm]'
+    end
+  end
+
   nginx_site site['name'] do
     listen '*:80'
     host site['host']

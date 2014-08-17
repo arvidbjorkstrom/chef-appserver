@@ -82,7 +82,11 @@ default['nginx']['sites'] = [
     'phpfpm' => true,
     'templatesource' => 'serverblock.conf.erb',
     'templatecookbook' => 'appserver',
-    'artisan_migrate' => true
+    'artisan_migrate' => true,
+    'git' => true,
+    'git_path' => '/var/www/example.se',
+    'git_repo' => 'git@github.com:gitsite/deployment.git',
+    'git_branch' => 'master'
   }
 ]
 
