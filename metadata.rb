@@ -11,10 +11,12 @@ recipe 'appserver', 'Installs and configures the server via internal recipes.'
 recipe 'appserver::dbserver', 'Internal recipe to setup mysql.'
 recipe 'appserver::webserver', 'Internal recipe to setup php-fpm and nginx.'
 
+depends 'timezone-ii'
 depends 'apt'
 depends 'git'
+depends "chef-solo-search"
+depends 'user'
+depends 'lxmx_oh_my_zsh'
 depends 'mysql'
 depends 'database'
 depends 'nginx' # https://github.com/phlipper/chef-nginx
-depends 'timezone-ii'
-depends 'deployer'
