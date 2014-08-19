@@ -5,6 +5,7 @@
 
 include_recipe 'timezone-ii'
 include_recipe 'apt'
+include_recipe 'zsh'
 include_recipe "chef-solo-search"
 include_recipe "lxmx_oh_my_zsh"
 include_recipe "users::sysadmins"
