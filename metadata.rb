@@ -17,7 +17,7 @@ depends 'zsh'
 depends 'git'
 depends "chef-solo-search"
 depends 'users'
-depends 'lxmx_oh_my_zsh'
+depends 'oh-my-zsh'
 depends 'mysql'
 depends 'database'
 depends 'nginx' # https://github.com/phlipper/chef-nginx
