@@ -61,8 +61,8 @@ node['nginx']['sites'].each do |site|
     repository site['git_repo']
     revision site['git_branch']
     action :sync
-    user "deploy"
-    group "deploy"
+    user 'deploy'
+    group 'deploy'
     notifies :restart, 'service[php-fpm]'
     only_if { site['git'] && ::File.exist?("#{home_basedir}/deploy/.ssh/git_rsa") } # rubocop:disable LineLength
   end

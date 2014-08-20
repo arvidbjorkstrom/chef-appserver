@@ -15,11 +15,11 @@ include_recipe 'timezone-ii'
 include_recipe 'apt'
 include_recipe 'zsh'
 include_recipe 'git'
-include_recipe "chef-solo-search"
-include_recipe "users::sysadmins"
-include_recipe "oh-my-zsh"
-search( :users, 'shell:*zsh AND NOT action:remove' ).each do |u|
-  user_id = u["id"]
+include_recipe 'chef-solo-search'
+include_recipe 'users::sysadmins'
+include_recipe 'oh-my-zsh'
+search(:users, 'shell:*zsh AND NOT action:remove').each do |u|
+  user_id = u['id']
 
   template "#{home_basedir}/#{user_id}/.oh-my-zsh/themes/agnoster2.zsh-theme" do
     source 'agnoster2.zsh-theme.erb'

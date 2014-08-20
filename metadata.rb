@@ -15,7 +15,7 @@ depends 'timezone-ii'
 depends 'apt'
 depends 'zsh'
 depends 'git'
-depends "chef-solo-search"
+depends 'chef-solo-search'
 depends 'users'
 depends 'oh-my-zsh'
 depends 'mysql'
