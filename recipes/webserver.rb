@@ -57,7 +57,8 @@ end
 include_recipe 'nginx::server'
 
 node['nginx']['sites'].each do |site|
-  git site['git_path'] do # ~FC022
+  git "Syncing git repository for #{site['name']}" do
+    destination site['git_path']
     repository site['git_repo']
     revision site['git_branch']
     action :sync
