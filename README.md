@@ -16,12 +16,16 @@ recipes should run on these platforms without error:
 
 ### Cookbooks
 
+* [timezone-ii](http://community.opscode.com/cookbooks/timezone-ii) Cookbook by Lawrence Gilbert
 * [apt](http://community.opscode.com/cookbooks/apt) Opscode LWRP Cookbook
+* [zsh](http://community.opscode.com/cookbooks/zsh) Opscode LWRP Cookbook
 * [git](http://community.opscode.com/cookbooks/git) Opscode LWRP Cookbook
+* [chef-solo-search](https://supermarket.getchef.com/cookbooks/chef-solo-search) Cookbook by Markus Korn
+* [users](http://community.opscode.com/cookbooks/users) Cookbook by Seth Vargo
+* [oh-my-zsh](http://community.opscode.com/cookbooks/oh-my-zsh) Cookbook by Heavy Water Software
 * [mysql](http://community.opscode.com/cookbooks/mysql) Opscode LWRP Cookbook
 * [database](http://community.opscode.com/cookbooks/database) Opscode LWRP Cookbook
-* [nginx](https://github.com/phlipper/chef-nginx) cookbook by Phil Cohen
-* [timezone-ii](http://community.opscode.com/cookbooks/timezone-ii) cookbook by Lawrence Gilbert
+* [nginx](https://github.com/phlipper/chef-nginx) Cookbook by Phil Cohen
 
 ### Chef
 
