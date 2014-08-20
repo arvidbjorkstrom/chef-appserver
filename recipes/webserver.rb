@@ -57,16 +57,14 @@ end
 include_recipe 'nginx::server'
 
 node['nginx']['sites'].each do |site|
-  if site['git']
-    git site['git_path'] do
-      repository site['git_repo']
-      revision site['git_branch']
-      action :sync
-      user "deploy"
-      group "root"
-      notifies :restart, 'service[php-fpm]'
-      only_if { ::File.exist?("#{home_basedir}/deploy/.ssh/git_rsa") } # rubocop:disable LineLength
-    end
+  git site['git_path'] do
+    repository site['git_repo']
+    revision site['git_branch']
+    action :sync
+    user "deploy"
+    group "deploy"
+    notifies :restart, 'service[php-fpm]'
+    only_if { site['git'] && ::File.exist?("#{home_basedir}/deploy/.ssh/git_rsa") } # rubocop:disable LineLength
   end
 
   nginx_site site['name'] do
