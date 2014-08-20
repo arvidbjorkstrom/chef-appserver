@@ -64,8 +64,8 @@ node['nginx']['sites'].each do |site|
     action :sync
     user 'deploy'
     group 'deploy'
-    ssh_wrapper "ssh -i #{home_basedir}/deploy/.ssh/git_rsa"
-    only_if { site['git'] && ::File.exist?("#{home_basedir}/deploy/.ssh/git_rsa") } # rubocop:disable LineLength
+    ssh_wrapper 'ssh -i /home/deploy/.ssh/git_rsa'
+    only_if { site['git'] && ::File.exist?('/home/deploy/.ssh/git_rsa') } # rubocop:disable LineLength
   end
 
   nginx_site site['name'] do
