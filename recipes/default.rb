@@ -18,6 +18,8 @@ include_recipe 'git'
 include_recipe 'chef-solo-search'
 include_recipe 'users::sysadmins'
 include_recipe 'oh-my-zsh'
+
+# Add custom agnoster2 oh-my-zsh theme
 search(:users, 'shell:*zsh AND NOT action:remove').each do |u|
   user_id = u['id']
 
