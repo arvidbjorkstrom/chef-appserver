@@ -10,7 +10,7 @@ include_recipe 'database::mysql'
 
 mysql_connection = {
   host:     'localhost',
-  username: 'root',
+  username: node['mysql']['server_root_username'],
   password: node['mysql']['server_root_password']
 }
 
@@ -31,7 +31,7 @@ node['mysql']['databases'].each do |db|
     end
 
     execute "import #{db['database']}.sql" do
-      command "mysql -u root -p\"#{node['mysql']['server_root_password']}\" #{db['database']} < /vagrant/#{db['database']}.sql" # rubocop:disable LineLength
+      command "mysql -u #{node['mysql']['server_root_username']} -p\"#{node['mysql']['server_root_password']}\" #{db['database']} < /vagrant/#{db['database']}.sql" # rubocop:disable LineLength
       action :run
       only_if { ::File.exist?("/vagrant/#{db['database']}.sql") }
     end
