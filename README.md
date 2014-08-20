@@ -3,6 +3,7 @@
 ## Description
 
 Install and configure server for a modern php framework with nginx, php-fpm, MySQL and Opcache.
+Made to play well with [vagrant-appserver](http://github.com/arvidbjorkstrom/vagrant-appserver)
 
 
 ## Requirements
