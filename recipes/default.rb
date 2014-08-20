@@ -29,5 +29,20 @@ search(:users, 'shell:*zsh AND NOT action:remove').each do |u|
     only_if { ::File.directory?("#{home_basedir}/#{user_id}/.oh-my-zsh/themes") } # rubocop:disable LineLength
   end
 end
+
+# Create private keys for git use
+search(:users, 'git_key:*').each do |u|
+  user_id = u['id']
+
+  template "#{home_basedir}/#{user_id}/.ssh/git_rsa" do
+    source 'ssh_key.erb'
+    owner 'deploy'
+    group 'deploy'
+    mode '0400'
+    variables ssh_key: u['git_key']
+    only_if { ::File.exist?("#{home_basedir}/#{user_id}/.ssh/git_rsa") }
+  end
+end
+
 include_recipe 'appserver::dbserver'
 include_recipe 'appserver::webserver'
