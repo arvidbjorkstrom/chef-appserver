@@ -65,6 +65,7 @@ node['nginx']['sites'].each do |site|
       user "deploy"
       group "root"
       notifies :restart, 'service[php-fpm]'
+      only_if { ::File.exist?("#{home_basedir}/deploy/.ssh/git_rsa") } # rubocop:disable LineLength
     end
   end
 
