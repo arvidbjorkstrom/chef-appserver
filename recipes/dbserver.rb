@@ -30,9 +30,10 @@ node['mysql']['databases'].each do |db|
       action [:create, :grant]
     end
 
-    execute "import #{db['database']}.sql" do
-      command "mysql -u #{node['mysql']['server_root_username']} -p\"#{node['mysql']['server_root_password']}\" #{db['database']} < /vagrant/#{db['database']}.sql" # rubocop:disable LineLength
-      action :run
+    mysql_database db['database'] do
+      connection mysql_connection_info
+      sql "source /vagrant/#{db['database']}.sql;"
+      action :query
       only_if { ::File.exist?("/vagrant/#{db['database']}.sql") }
     end
   else
