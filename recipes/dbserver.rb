@@ -30,12 +30,10 @@ node['mysql']['databases'].each do |db|
       action [:create, :grant]
     end
 
-    mysql_database "Import to #{db['database']}" do
-      connection mysql_connection
-      database_name db['database']
-      sql "source /vagrant/#{db['database']}.sql"
-      action :query
-      only_if { ::File.exist?("/vagrant/#{db['database']}.sql") }
+    execute "Import to #{db['database']}" do
+      command "mysql -u #{node['mysql']['server_root_username']} -p\"#{node['mysql']['server_root_password']}\" #{db['database']} < /tmp/#{db['database']}.sql" # rubocop:disable LineLength
+      action :run
+      only_if { ::File.exist?("/tmp/#{db['database']}.sql") }
     end
   else
     mysql_database db['database'] do
