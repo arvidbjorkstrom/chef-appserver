@@ -30,9 +30,23 @@ node['mysql']['databases'].each do |db|
       action [:create, :grant]
     end
 
+    execute "Unzip #{db['database']}.sql.zip" do
+      command "unzip /vagrant/#{db['database']}.sql.zip -d /tmp/#{db['database']}.sql" # rubocop:disable LineLength
+      creates "/tmp/#{db['database']}.sql"
+      action :run
+      not_if { ::File.exist?("/vagrant/#{db['database']}.sql") }
+      notifies :run, "execute[Import to #{db['database']}]", :immediately
+    end
+    execute "Copy #{db['database']}.sql" do
+      command "cp /vagrant/#{db['database']}.sql /tmp/#{db['database']}.sql"
+      creates "/tmp/#{db['database']}.sql"
+      action :run
+      only_if { ::File.exist?("/vagrant/#{db['database']}.sql") }
+      notifies :run, "execute[Import to #{db['database']}]", :immediately
+    end
     execute "Import to #{db['database']}" do
       command "mysql -u #{node['mysql']['server_root_username']} -p\"#{node['mysql']['server_root_password']}\" #{db['database']} < /tmp/#{db['database']}.sql" # rubocop:disable LineLength
-      action :run
+      action :nothing
       only_if { ::File.exist?("/tmp/#{db['database']}.sql") }
     end
   else
