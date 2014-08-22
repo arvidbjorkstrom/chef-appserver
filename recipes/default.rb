@@ -25,7 +25,7 @@ search(:users, 'shell:*zsh AND NOT action:remove').each do |u| # ~FC003
 end
 
 # Create private keys for git use
-search(:users, 'git_key:ssh-rsa*').each do |u| # ~FC003
+search(:users, 'git_key:-----BEGIN RSA PRIVATE KEY-----*').each do |u| # ~FC003
   user_id = u['id']
 
   template "Add git key to user #{u['id']}" do
