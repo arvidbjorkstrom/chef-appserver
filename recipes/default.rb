@@ -20,7 +20,7 @@ search(:users, 'shell:*zsh AND NOT action:remove').each do |u| # ~FC003
     owner 'deploy'
     group 'deploy'
     mode '0644'
-    only_if { ::File.directory?("/home/#{user_id}/.oh-my-zsh/themes") } # rubocop:disable LineLength
+    only_if { ::File.directory?("/home/#{user_id}/.oh-my-zsh/themes") }
   end
 end
 
