@@ -73,7 +73,7 @@ node['nginx']['sites'].each do |site|
     user 'deploy'
     group 'deploy'
     ssh_wrapper 'ssh -i /home/deploy/.ssh/git_rsa'
-    only_if { site['git'] && ::File.exist?('/home/deploy/.ssh/git_rsa') } # rubocop:disable LineLength
+    only_if { site['git'] && ::File.exist?('/home/deploy/.ssh/git_rsa') }
   end
 
   nginx_site site['name'] do
