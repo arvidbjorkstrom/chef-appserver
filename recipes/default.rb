@@ -25,16 +25,18 @@ search(:users, 'shell:*zsh AND NOT action:remove').each do |u| # ~FC003
 end
 
 # Create private keys for git use
-search(:users, 'git_key:*').each do |u| # ~FC003
+search(:users, 'git_key:ssh-rsa*').each do |u| # ~FC003
   user_id = u['id']
 
-  template "/home/#{user_id}/.ssh/git_rsa" do
+  template "Add git key to user #{u['id']}" do
+    path "/home/#{user_id}/.ssh/git_rsa"
     source 'ssh_key.erb'
     owner 'deploy'
     group 'deploy'
     mode '0400'
     variables ssh_key: u['git_key']
-    only_if { ::File.exist?("/home/#{user_id}/.ssh/git_rsa") }
+    only_if { ::File.directory?("/home/#{user_id}/.ssh") }
+    not_if { ::File.exist?("/home/#{user_id}/.ssh/git_rsa") }
   end
 end
 
