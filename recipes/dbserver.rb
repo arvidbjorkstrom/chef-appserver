@@ -30,9 +30,10 @@ node['mysql']['databases'].each do |db|
       action [:create, :grant]
     end
 
-    mysql_database db['database'] do
+    mysql_database "Import to #{db['database']}" do
       connection mysql_connection
-      sql "source /vagrant/#{db['database']}.sql;"
+      database_name db['database']
+      sql "source /vagrant/#{db['database']}.sql"
       action :query
       only_if { ::File.exist?("/vagrant/#{db['database']}.sql") }
     end
