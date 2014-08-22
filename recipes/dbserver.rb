@@ -31,7 +31,7 @@ node['mysql']['databases'].each do |db|
     end
 
     mysql_database db['database'] do
-      connection mysql_connection_info
+      connection mysql_connection
       sql "source /vagrant/#{db['database']}.sql;"
       action :query
       only_if { ::File.exist?("/vagrant/#{db['database']}.sql") }
