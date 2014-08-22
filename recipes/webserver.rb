@@ -56,6 +56,14 @@ end
 # NGINX install
 include_recipe 'nginx::server'
 
+directory '/var/www' do
+  owner 'root'
+  group 'root'
+  mode '0755'
+  action :create
+  not_if { ::File.directory?('/var/www') }
+end
+
 node['nginx']['sites'].each do |site|
   git "Syncing git repository for #{site['name']}" do
     destination site['git_path']
