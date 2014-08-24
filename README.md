@@ -44,6 +44,7 @@ This cookbook requires Ruby 1.9+ and is tested against:
 ## Recipes
 
 * `appserver` - Installs and configures the server via the internal recipes.
+* `appserver::userconfig` - Internal recipe to do additional configuration of users
 * `appserver::dbserver` - Internal recipe to setup mysql and import any supplied sql dump
 * `appserver::webserver` - Internal recipe to setup php, php-fpm, composer and nginx.
 
