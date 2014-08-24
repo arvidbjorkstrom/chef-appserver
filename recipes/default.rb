@@ -9,6 +9,7 @@ include_recipe 'zsh'
 include_recipe 'git'
 include_recipe 'chef-solo-search'
 include_recipe 'users::sysadmins'
+include_recipe 'sudo'
 include_recipe 'oh-my-zsh'
 
 include_recipe 'appserver::userconfig'

@@ -6,6 +6,10 @@
 # Timezone
 default['tz'] = 'Europe/Stockholm'
 
+# Sudo
+default['authorization']['sudo']['groups'] = ['admin', 'wheel', 'sysadmin']
+default['authorization']['sudo']['passwordless'] = true
+
 # MySQL
 default['mysql']['server_root_username'] = 'root'
 default['mysql']['server_root_password'] = 'YouShouldReplaceThis'
