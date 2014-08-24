@@ -116,6 +116,14 @@ node['nginx']['sites'].each do |site|
     not_if { site['composer_update'] }
   end
 
+  # Set writeable directories
+  site['writeable_dirs'].each do |dir_path|
+    directory dir_path do
+      owner 'www-data'
+      group 'deploy'
+      mode '0775'
+    end
+  end
 
   # Set up nginx server block
   nginx_site site['name'] do
