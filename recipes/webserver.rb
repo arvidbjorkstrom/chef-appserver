@@ -119,10 +119,18 @@ node['nginx']['sites'].each do |site|
   # Set writeable directories
   if site['writeable_dirs'].kind_of? Array
     site['writeable_dirs'].each do |dir_path|
-      directory dir_path do
-        owner 'www-data'
-        group 'deploy'
-        mode '0775'
+      if dir_path.initial = '/'
+        directory dir_path do
+          owner 'www-data'
+          group 'deploy'
+          mode '0775'
+        end
+      else
+        directory "#{site['git_path']}/#{dir_path}" do
+          owner 'www-data'
+          group 'deploy'
+          mode '0775'
+        end
       end
     end
   end
