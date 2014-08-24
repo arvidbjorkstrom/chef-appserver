@@ -13,30 +13,26 @@ include_recipe 'oh-my-zsh'
 
 # Add custom agnoster2 oh-my-zsh theme
 search(:users, 'shell:*zsh AND NOT action:remove').each do |u| # ~FC003
-  user_id = u['id']
-
-  template "/home/#{user_id}/.oh-my-zsh/themes/agnoster2.zsh-theme" do
+  template "/home/#{u['id']}/.oh-my-zsh/themes/agnoster2.zsh-theme" do
     source 'agnoster2.zsh-theme.erb'
-    owner 'deploy'
-    group 'deploy'
+    owner u['id']
+    group u['id']
     mode '0644'
-    only_if { ::File.directory?("/home/#{user_id}/.oh-my-zsh/themes") }
+    only_if { ::File.directory?("/home/#{u['id']}/.oh-my-zsh/themes") }
   end
 end
 
 # Create private keys for git use
 search(:users, 'git_key:* AND NOT git_key:Add*').each do |u| # ~FC003
-  user_id = u['id']
-
   template "Add git key to user #{u['id']}" do
-    path "/home/#{user_id}/.ssh/git_rsa"
+    path "/home/#{u['id']}/.ssh/git_rsa"
     source 'ssh_key.erb'
-    owner 'deploy'
-    group 'deploy'
+    owner u['id']
+    group u['id']
     mode '0400'
     variables ssh_key: u['git_key']
-    only_if { ::File.directory?("/home/#{user_id}/.ssh") }
-    not_if { ::File.exist?("/home/#{user_id}/.ssh/git_rsa") }
+    only_if { ::File.directory?("/home/#{u['id']}/.ssh") }
+    not_if { ::File.exist?("/home/#{u['id']}/.ssh/git_rsa") }
   end
 end
 
