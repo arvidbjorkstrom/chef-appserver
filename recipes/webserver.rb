@@ -79,11 +79,12 @@ node['nginx']['sites'].each do |site|
     group 'deploy'
     ssh_wrapper '/home/deploy/git_wrapper.sh'
     only_if { site['git'] && ::File.exist?('/home/deploy/.ssh/git_rsa') }
-    notifies :run, "execute[Composer update #{site['name']}]"
+    notifies :run, "execute[Composer update #{site['name']} after git sync]"
   end
 
+
   # Composer update triggered by git sync
-  execute "Composer update #{site['name']}" do
+  execute "Composer update #{site['name']} after git sync" do
     command "cd #{site['git_path']};composer update"
     action :nothing
     only_if { site['git'] && site['composer_update'] }
