@@ -1,2 +1,2 @@
 #!/bin/sh
-ssh -i /home/deploy/.ssh/git_rsa
+ssh -o StrictHostKeyChecking=no -i /home/deploy/.ssh/git_rsa "$@"
