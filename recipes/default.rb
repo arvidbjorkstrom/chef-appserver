@@ -12,7 +12,7 @@ include_recipe 'users::sysadmins'
 include_recipe 'oh-my-zsh'
 
 # Add custom agnoster2 oh-my-zsh theme
-search(:users, 'shell:*zsh AND NOT action:remove').each do |u| # ~FC003
+search(:users, 'shell:*zsh NOT action:remove').each do |u|
   template "/home/#{u['id']}/.oh-my-zsh/themes/agnoster2.zsh-theme" do
     source 'agnoster2.zsh-theme.erb'
     owner u['id']
@@ -23,7 +23,7 @@ search(:users, 'shell:*zsh AND NOT action:remove').each do |u| # ~FC003
 end
 
 # Create private keys for git use
-search(:users, 'git_key:* AND NOT git_key:Add*').each do |u| # ~FC003
+search(:users, 'git_key:* NOT git_key:Add* NOT action:remove').each do |u|
   template "Add git key to user #{u['id']}" do
     path "/home/#{u['id']}/.ssh/git_rsa"
     source 'ssh_key.erb'
