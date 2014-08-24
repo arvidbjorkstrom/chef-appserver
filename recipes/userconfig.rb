@@ -1,12 +1,12 @@
 def chef_solo_search_installed?
-  klass = ::Search::const_get('Helper')
+  klass = ::Search.const_get('Helper')
   return klass.is_a?(Class)
 rescue NameError
   return false
 end
 
-if Chef::Config[:solo] and not chef_solo_search_installed?
-  Chef::Log.warn("This recipe uses search. Chef Solo does not support search unless you install the chef-solo-search cookbook.")
+if Chef::Config[:solo] && !chef_solo_search_installed?
+  Chef::Log.warn('This recipe uses search. Chef Solo does not support search unless you install the chef-solo-search cookbook.') # rubocop:disable LineLength
 else
   # Add custom agnoster2 oh-my-zsh theme
   search(:users, 'shell:*zsh NOT action:remove').each do |u|
