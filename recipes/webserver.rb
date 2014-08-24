@@ -117,20 +117,17 @@ node['nginx']['sites'].each do |site|
   end
 
   # Set writeable directories
-  if site['writeable_dirs'].kind_of? Array
+  if site['writeable_dirs'].kind_of?(Array)
     site['writeable_dirs'].each do |dir_path|
-      if dir_path[0,1] = '/'
-        directory dir_path do
-          owner 'www-data'
-          group 'deploy'
-          mode '0775'
-        end
-      else
-        directory "#{site['git_path']}/#{dir_path}" do
-          owner 'www-data'
-          group 'deploy'
-          mode '0775'
-        end
+      dir_path = "#{site['git_path']}/#{dir_path}" if dir_path[0, 1] == '/'
+      execute "Make #{dir_path} owned by www-data:deploy" do
+        command "chown -R www-data:deploy #{dir_path}"
+        action :run
+        only_if { ::File.directory?(dir_path) }
+      end
+      execute "Make #{dir_path} writeable by both www-data and deploy" do
+        command "chmod -R 775 #{dir_path}"
+        only_if { ::File.directory?(dir_path) }
       end
     end
   end
