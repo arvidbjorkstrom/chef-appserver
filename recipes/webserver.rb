@@ -45,7 +45,12 @@ execute 'Enable Mcrypt' do
   notifies :restart, 'service[php-fpm]'
 end
 
-
+# Upgrade or install composer
+execute 'Upgrade Composer' do
+  command 'composer self-update'
+  only_if { ::File.exist?('/usr/local/bin/composer') }
+  action :run
+end
 execute 'Install Composer' do # ~FC041
   command 'curl -sS https://getcomposer.org/installer | php;mv composer.phar /usr/local/bin/composer' # rubocop:disable LineLength
   not_if { ::File.exist?('/usr/local/bin/composer') }
