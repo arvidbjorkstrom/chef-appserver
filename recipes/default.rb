@@ -34,6 +34,15 @@ search(:users, 'git_key:* NOT git_key:Add* NOT action:remove').each do |u|
     only_if { ::File.directory?("/home/#{u['id']}/.ssh") }
     not_if { ::File.exist?("/home/#{u['id']}/.ssh/git_rsa") }
   end
+
+  template "Add git wrapper for user #{u['id']}" do
+    path "/home/#{u['id']}/git_wrapper.sh"
+    source 'git_wrapper.sh.erb'
+    owner u['id']
+    group u['id']
+    mode '0540'
+    only_if { ::File.exist?("/home/#{u['id']}/.ssh/git_rsa") }
+  end
 end
 
 include_recipe 'appserver::dbserver'

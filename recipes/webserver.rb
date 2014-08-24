@@ -72,7 +72,7 @@ node['nginx']['sites'].each do |site|
     action :sync
     user 'deploy'
     group 'deploy'
-    ssh_wrapper 'ssh -i /home/deploy/.ssh/git_rsa'
+    ssh_wrapper '/home/deploy/git_wrapper.sh'
     only_if { site['git'] && ::File.exist?('/home/deploy/.ssh/git_rsa') }
   end
 
