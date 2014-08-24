@@ -57,7 +57,7 @@ end
 include_recipe 'nginx::server'
 
 directory '/var/www' do
-  owner 'root'
+  owner 'deploy'
   group 'sysadmin'
   mode '0775'
   action :create
