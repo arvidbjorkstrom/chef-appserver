@@ -7,7 +7,7 @@
 default['tz'] = 'Europe/Stockholm'
 
 # Sudo
-default['authorization']['sudo']['groups'] = ['admin', 'wheel', 'sysadmin']
+default['authorization']['sudo']['groups'] = %w(admin wheel sysadmin)
 default['authorization']['sudo']['passwordless'] = true
 
 # MySQL
