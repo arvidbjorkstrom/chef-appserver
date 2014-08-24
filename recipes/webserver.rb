@@ -58,8 +58,8 @@ include_recipe 'nginx::server'
 
 directory '/var/www' do
   owner 'root'
-  group 'root'
-  mode '0755'
+  group 'sysadmin'
+  mode '0775'
   action :create
   not_if { ::File.directory?('/var/www') }
 end
