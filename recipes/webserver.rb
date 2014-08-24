@@ -116,6 +116,7 @@ node['nginx']['sites'].each do |site|
     not_if { site['composer_update'] }
   end
 
+
   # Set up nginx server block
   nginx_site site['name'] do
     listen '*:80'
