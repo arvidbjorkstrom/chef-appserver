@@ -119,7 +119,7 @@ node['nginx']['sites'].each do |site|
   # Set writeable directories
   if site['writeable_dirs'].kind_of? Array
     site['writeable_dirs'].each do |dir_path|
-      if dir_path.initial = '/'
+      if dir_path[0,1] = '/'
         directory dir_path do
           owner 'www-data'
           group 'deploy'
