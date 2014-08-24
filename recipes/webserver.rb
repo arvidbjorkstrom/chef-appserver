@@ -88,6 +88,7 @@ node['nginx']['sites'].each do |site|
     command "cd #{site['git_path']};composer update"
     action :nothing
     only_if { site['git'] && site['composer_update'] }
+    notifies :run, "execute[Artisan migrate #{site['name']} after composer]"
   end
 
   # Composer update without git
@@ -96,8 +97,26 @@ node['nginx']['sites'].each do |site|
     action :run
     only_if { site['composer_update'] }
     not_if { site['git'] }
+    notifies :run, "execute[Artisan migrate #{site['name']} after composer]"
   end
 
+
+  # Artisan migrate triggered by composer update
+  execute "Artisan migrate #{site['name']} after composer" do
+    command "php #{site['root']}/../artisan migrate"
+    action :nothing
+    only_if { site['composer_update'] && site['artisan_migrate'] }
+  end
+
+  # Artisan migrate without composer update
+  execute "Artisan migrate #{site['name']}" do
+    command "php #{site['root']}/../artisan migrate"
+    action :run
+    only_if { site['artisan_migrate'] }
+    not_if { site['composer_update'] }
+  end
+
+  # Set up nginx server block
   nginx_site site['name'] do
     listen '*:80'
     host site['host']
@@ -109,11 +128,5 @@ node['nginx']['sites'].each do |site|
     templatecookbook site['templatecookbook']
     action [:create, :enable]
     notifies :restart, 'service[php-fpm]'
-  end
-
-  execute "Migrating #{site['name']} with artisan" do
-    command "php #{site['root']}/../artisan migrate"
-    action :run
-    only_if { site['artisan_migrate'] }
   end
 end
