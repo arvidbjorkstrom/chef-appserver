@@ -129,5 +129,6 @@ node['nginx']['sites'].each do |site|
     templatecookbook site['templatecookbook']
     action [:create, :enable]
     notifies :restart, 'service[php-fpm]'
+    notifies :restart, 'service[nginx]'
   end
 end
