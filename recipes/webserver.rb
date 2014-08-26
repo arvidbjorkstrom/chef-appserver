@@ -138,10 +138,10 @@ node['nginx']['sites'].each do |site|
     host site['host']
     root site['root']
     index site['index']
-    slashlocation site['slashlocation']
+    location site['location']
     phpfpm site['phpfpm']
-    templatesource site['templatesource']
-    templatecookbook site['templatecookbook']
+    template_cookbook site['template_cookbook']
+    template_source site['template_source']
     action [:create, :enable]
     notifies :restart, 'service[php-fpm]'
     notifies :restart, 'service[nginx]'
