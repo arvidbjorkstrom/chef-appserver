@@ -85,7 +85,7 @@ node['nginx']['sites'].each do |site|
 
   # Composer update triggered by git sync
   execute "Composer update #{site['name']} after git sync" do
-    command "cd #{site['git_path']};composer update"
+    command "cd #{site['composer_update_path']};composer update"
     action :nothing
     only_if { site['git'] && site['composer_update'] }
     notifies :run, "execute[Artisan migrate #{site['name']} after composer]"
@@ -93,7 +93,7 @@ node['nginx']['sites'].each do |site|
 
   # Composer update without git
   execute "Composer update #{site['name']}" do
-    command "cd #{site['git_path']};composer update"
+    command "cd #{site['composer_update_path']};composer update"
     action :run
     only_if { site['composer_update'] }
     not_if { site['git'] }
