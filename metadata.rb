@@ -19,6 +19,6 @@ depends 'chef-solo-search'
 depends 'users'
 depends 'sudo'
 depends 'oh-my-zsh'
-depends 'mysql', '5.3.6'
+depends 'mysql', '~>5.4.4'
 depends 'database'
 depends 'nginx' # https://github.com/phlipper/chef-nginx
