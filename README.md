@@ -115,6 +115,7 @@ default['opcache']['max_accelerated_files'] = '4000'
 default['opcache']['revalidate_freq'] = '60'
 default['opcache']['fast_shutdown'] = '1'
 default['opcache']['enable_cli'] = '1'
+default['opcache']['consistency_checks'] = '0'
 ```
 
 ## TODO
