@@ -58,7 +58,7 @@ server {
   }
 
   <% if @access_log -%>
-  access_log <%= node["nginx"]["log_dir"] %>/<%= @name %>.access.log;
+  access_log <%= node["nginx"]["log_dir"] %>/<%= @name %>-access.log;
   <% else -%>
   access_log off;
   <% end -%>
