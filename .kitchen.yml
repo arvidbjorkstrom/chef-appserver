@@ -13,5 +13,5 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[chef-appserver::default]
+      - recipe[appserver::default]
     attributes:

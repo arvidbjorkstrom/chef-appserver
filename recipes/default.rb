@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: chef-appserver
+# Cookbook Name:: appserver
 # Recipe:: default
 #
 
