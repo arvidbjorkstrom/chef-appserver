@@ -14,6 +14,8 @@ mysql_connection = {
   password: node['mysql']['server_root_password']
 }
 
+package 'unzip'
+
 node['mysql']['databases'].each do |db|
 
   if db['overwrite']
