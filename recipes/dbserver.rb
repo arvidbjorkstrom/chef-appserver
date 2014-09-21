@@ -33,7 +33,7 @@ node['mysql']['databases'].each do |db|
     end
 
     execute "Unzip #{db['database']}.sql.zip" do
-      command "unzip /vagrant/#{db['database']}.sql.zip -d /tmp/#{db['database']}.sql" # rubocop:disable LineLength
+      command "unzip /vagrant/#{db['database']}.sql.zip -d /tmp/"
       creates "/tmp/#{db['database']}.sql"
       action :run
       not_if { ::File.exist?("/vagrant/#{db['database']}.sql") }
