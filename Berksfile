@@ -2,4 +2,4 @@ source "https://api.berkshelf.com"
 
 metadata
 
-cookbook "nginx", :github => "phlipper/chef-nginx"
+cookbook "nginx", :github => "arvidbjorkstrom/chef-nginx"

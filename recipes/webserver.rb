@@ -103,14 +103,14 @@ node['nginx']['sites'].each do |site|
 
   # Artisan migrate triggered by composer update
   execute "Artisan migrate #{site['name']} after composer" do
-    command "php #{site['root']}/../artisan migrate"
+    command "php #{site['root']}/../artisan --env=#{site['environment']} migrate" # rubocop:disable LineLength
     action :nothing
     only_if { site['composer_update'] && site['artisan_migrate'] }
   end
 
   # Artisan migrate without composer update
   execute "Artisan migrate #{site['name']}" do
-    command "php #{site['root']}/../artisan migrate"
+    command "php #{site['root']}/../artisan --env=#{site['environment']} migrate" # rubocop:disable LineLength
     action :run
     only_if { site['artisan_migrate'] }
     not_if { site['composer_update'] }
@@ -132,6 +132,10 @@ node['nginx']['sites'].each do |site|
     end
   end
 
+  site['custom'] = {
+    'environment' => site['environment']
+  }
+
   # Set up nginx server block
   nginx_site site['name'] do
     listen '*:80'
@@ -140,6 +144,7 @@ node['nginx']['sites'].each do |site|
     index site['index']
     location site['location']
     phpfpm site['phpfpm']
+    custom site['custom']
     template_cookbook site['template_cookbook']
     template_source site['template_source']
     action [:create, :enable]
