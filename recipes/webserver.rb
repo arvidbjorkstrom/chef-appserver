@@ -116,6 +116,13 @@ node['nginx']['sites'].each do |site|
     not_if { site['composer_update'] }
   end
 
+  # Compass compile
+  compass_project site['name'] do
+    path site['compass_path']
+    action :compile
+    only_if { site['compass_compile'] }
+  end
+
   # Set writeable directories
   if site['writeable_dirs'].kind_of?(Array)
     site['writeable_dirs'].each do |dir_path|
