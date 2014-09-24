@@ -70,8 +70,15 @@ directory '/var/www' do
 end
 
 node['nginx']['sites'].each do |site|
+
+  git_path = "#{site['base_path']}/#{site['git_subpath']}" if site['git']
+  composer_path = "#{site['base_path']}/#{site['composer_subpath']}"
+  artisan_path = "#{site['base_path']}/#{site['artisan_subpath']}"
+  compass_path = "#{site['base_path']}/#{site['compass_subpath']}"
+  webroot_path = "#{site['base_path']}/#{site['webroot_subpath']}"
+
   git "Syncing git repository for #{site['name']}" do
-    destination site['git_path']
+    destination git_path
     repository site['git_repo']
     revision site['git_branch']
     action :sync
@@ -85,7 +92,7 @@ node['nginx']['sites'].each do |site|
 
   # Composer update triggered by git sync
   execute "Composer update #{site['name']} after git sync" do
-    command "composer update -n -d #{site['composer_update_path']}"
+    command "composer update -n -d #{composer_path}"
     action :nothing
     only_if { site['git'] && site['composer_update'] }
     notifies :run, "execute[Artisan migrate #{site['name']} after composer]"
@@ -93,7 +100,7 @@ node['nginx']['sites'].each do |site|
 
   # Composer update without git
   execute "Composer update #{site['name']}" do
-    command "composer update -n -d #{site['composer_update_path']}"
+    command "composer update -n -d #{composer_path}"
     action :run
     only_if { site['composer_update'] }
     not_if { site['git'] }
@@ -103,14 +110,14 @@ node['nginx']['sites'].each do |site|
 
   # Artisan migrate triggered by composer update
   execute "Artisan migrate #{site['name']} after composer" do
-    command "php #{site['root']}/../artisan --env=#{site['environment']} migrate" # rubocop:disable LineLength
+    command "php #{artisan_path} --env=#{site['environment']} migrate"
     action :nothing
     only_if { site['composer_update'] && site['artisan_migrate'] }
   end
 
   # Artisan migrate without composer update
   execute "Artisan migrate #{site['name']}" do
-    command "php #{site['root']}/../artisan --env=#{site['environment']} migrate" # rubocop:disable LineLength
+    command "php #{artisan_path} --env=#{site['environment']} migrate"
     action :run
     only_if { site['artisan_migrate'] }
     not_if { site['composer_update'] }
@@ -118,7 +125,7 @@ node['nginx']['sites'].each do |site|
 
   # Compass compile
   compass_project site['name'] do
-    path site['compass_path']
+    path compass_path
     action :compile
     only_if { site['compass_compile'] }
   end
@@ -126,7 +133,7 @@ node['nginx']['sites'].each do |site|
   # Set writeable directories
   if site['writeable_dirs'].kind_of?(Array)
     site['writeable_dirs'].each do |dir_path|
-      dir_path = "#{site['git_path']}/#{dir_path}" unless dir_path[0, 1] == '/'
+      dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1] == '/'
       execute "Make #{dir_path} owned by www-data:deploy" do
         command "chown -R www-data:deploy #{dir_path}"
         action :run
@@ -145,7 +152,7 @@ node['nginx']['sites'].each do |site|
   nginx_site site['name'] do
     listen '*:80'
     host site['host']
-    root site['root']
+    root webroot_path
     index site['index']
     location site['location']
     phpfpm site['phpfpm']
