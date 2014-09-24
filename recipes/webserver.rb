@@ -3,6 +3,9 @@
 # Recipe:: webserver
 #
 
+# Compass
+include_recipe 'compass'
+
 # PHP FPM
 package 'php5-fpm' do
   action :install
