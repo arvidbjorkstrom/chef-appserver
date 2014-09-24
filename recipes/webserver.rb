@@ -62,7 +62,7 @@ end
 include_recipe 'nginx::server'
 
 directory '/var/www' do
-  owner 'deploy'
+  owner deploy_usr
   group 'sysadmin'
   mode '0775'
   action :create
@@ -82,10 +82,9 @@ node['nginx']['sites'].each do |site|
     repository site['git_repo']
     revision site['git_branch']
     action :sync
-    user 'deploy'
-    group 'deploy'
-    ssh_wrapper '/home/deploy/git_wrapper.sh'
-    only_if { site['git'] && ::File.exist?('/home/deploy/.ssh/git_rsa') }
+    user deploy_usr
+    ssh_wrapper "/home/#{deploy_usr}/git_wrapper.sh"
+    only_if { site['git'] && ::File.exist?("/home/#{deploy_usr}/.ssh/git_rsa") }
     notifies :run, "execute[Composer update #{site['name']} after git sync]"
   end
 
@@ -94,6 +93,7 @@ node['nginx']['sites'].each do |site|
   execute "Composer update #{site['name']} after git sync" do
     command "composer update -n -d #{composer_path}"
     action :nothing
+    user deploy_usr
     only_if { site['git'] && site['composer_update'] }
     notifies :run, "execute[Artisan migrate #{site['name']} after composer]"
   end
@@ -102,6 +102,7 @@ node['nginx']['sites'].each do |site|
   execute "Composer update #{site['name']}" do
     command "composer update -n -d #{composer_path}"
     action :run
+    user deploy_usr
     only_if { site['composer_update'] }
     not_if { site['git'] }
     notifies :run, "execute[Artisan migrate #{site['name']} after composer]"
@@ -112,6 +113,7 @@ node['nginx']['sites'].each do |site|
   execute "Artisan migrate #{site['name']} after composer" do
     command "php #{artisan_path} --env=#{site['environment']} migrate"
     action :nothing
+    user deploy_usr
     only_if { site['composer_update'] && site['artisan_migrate'] }
   end
 
@@ -119,6 +121,7 @@ node['nginx']['sites'].each do |site|
   execute "Artisan migrate #{site['name']}" do
     command "php #{artisan_path} --env=#{site['environment']} migrate"
     action :run
+    user deploy_usr
     only_if { site['artisan_migrate'] }
     not_if { site['composer_update'] }
   end
@@ -127,6 +130,7 @@ node['nginx']['sites'].each do |site|
   compass_project site['name'] do
     path compass_path
     action :compile
+    user deploy_usr
     only_if { site['compass_compile'] }
   end
 
@@ -134,12 +138,12 @@ node['nginx']['sites'].each do |site|
   if site['writeable_dirs'].kind_of?(Array)
     site['writeable_dirs'].each do |dir_path|
       dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1] == '/'
-      execute "Make #{dir_path} owned by www-data:deploy" do
-        command "chown -R www-data:deploy #{dir_path}"
+      execute "Make #{dir_path} owned by www-data:#{deploy_usr}" do
+        command "chown -R www-data:#{deploy_usr} #{dir_path}"
         action :run
         only_if { ::File.directory?(dir_path) }
       end
-      execute "Make #{dir_path} writeable by both www-data and deploy" do
+      execute "Make #{dir_path} writeable by both www-data and #{deploy_usr}" do
         command "chmod -R 775 #{dir_path}"
         only_if { ::File.directory?(dir_path) }
       end
