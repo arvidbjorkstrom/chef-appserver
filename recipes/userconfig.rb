@@ -5,8 +5,6 @@ rescue NameError
   return false
 end
 
-deploy_usr = 'vagrant'
-
 if Chef::Config[:solo] && !chef_solo_search_installed?
   Chef::Log.warn('This recipe uses search. Chef Solo does not support search unless you install the chef-solo-search cookbook.') # rubocop:disable LineLength
 else
@@ -50,7 +48,5 @@ else
       command "su #{u['id']} -l -c 'git config --global core.filemode false'"
       action :run
     end
-
-    deploy_usr = u['id'] if u['id'] == 'deploy'
   end
 end

@@ -3,6 +3,20 @@
 # Recipe:: webserver
 #
 
+# Set deploy_usr
+deploy_usr = 'vagrant'
+def chef_solo_search_installed?
+  klass = ::Search.const_get('Helper')
+  return klass.is_a?(Class)
+rescue NameError
+  return false
+end
+unless Chef::Config[:solo] && !chef_solo_search_installed?
+  search(:users, 'id:deploy NOT action:remove').each do |u|
+    deploy_usr = u['id']
+  end
+end
+
 # Compass
 include_recipe 'compass'
 
