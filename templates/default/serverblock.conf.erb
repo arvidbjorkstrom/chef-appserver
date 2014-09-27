@@ -43,9 +43,9 @@ server {
     fastcgi_param  SERVER_ADDR        $server_addr;
     fastcgi_param  SERVER_PORT        $server_port;
     fastcgi_param  SERVER_NAME        $server_name;
-    <% if custom && custom['environment'] -%>
-    fastcgi_param  ENVIRONEMNT        <%= custom['environment'] %>;
-    fastcgi_param  ENV                <%= custom['environment'] %>;
+    <% if @custom_data && @custom_data['environment'] -%>
+    fastcgi_param  ENVIRONEMNT        <%= @custom_data['environment'] %>;
+    fastcgi_param  ENV                <%= @custom_data['environment'] %>;
     <% elsif node.chef_environment -%>
     fastcgi_param  ENVIRONEMNT        <%= node.chef_environment %>;
     fastcgi_param  ENV                <%= node.chef_environment %>;

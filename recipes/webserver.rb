@@ -167,7 +167,7 @@ node['nginx']['sites'].each do |site|
     end
   end
 
-  custom = { 'environment' => site['environment'] }
+  custom_data = { 'environment' => site['environment'] }
 
   # Set up nginx server block
   nginx_site site['name'] do
@@ -177,7 +177,7 @@ node['nginx']['sites'].each do |site|
     index site['index']
     location site['location']
     phpfpm site['phpfpm']
-    custom custom
+    custom_data custom_data
     template_cookbook site['template_cookbook']
     template_source site['template_source']
     action [:create, :enable]
