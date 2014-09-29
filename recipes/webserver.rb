@@ -156,12 +156,12 @@ node['nginx']['sites'].each do |site|
   if site['writeable_dirs'].kind_of?(Array)
     site['writeable_dirs'].each do |dir_path|
       dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1] == '/'
-      execute "Make #{dir_path} owned by www-data:#{deploy_usr}" do
-        command "chown -R www-data:#{deploy_usr} #{dir_path}"
+      execute "Make #{dir_path} owned by #{deploy_usr}:www-data" do
+        command "chown -R #{deploy_usr}:www-data #{dir_path}"
         action :run
         only_if { ::File.directory?(dir_path) }
       end
-      execute "Make #{dir_path} writeable by both www-data and #{deploy_usr}" do
+      execute "Make #{dir_path} writeable by both #{deploy_usr} and www-data" do
         command "chmod -R 775 #{dir_path}"
         only_if { ::File.directory?(dir_path) }
       end
