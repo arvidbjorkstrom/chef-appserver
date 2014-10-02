@@ -94,6 +94,7 @@ node['nginx']['sites'].each do |site|
   compass_path = "#{site['base_path']}/#{site['compass_subpath']}" if site['compass_compile']
   webroot_path = "#{site['base_path']}/#{site['webroot_subpath']}"
 
+  # Sync with git repository
   git "Syncing git repository for #{site['name']}" do
     destination git_path
     repository site['git_repo']
@@ -104,6 +105,8 @@ node['nginx']['sites'].each do |site|
     ssh_wrapper "/home/#{deploy_usr}/git_wrapper.sh"
     only_if { site['git'] && ::File.exist?("/home/#{deploy_usr}/.ssh/git_rsa") }
     notifies :run, "execute[Composer update #{site['name']} after git sync]"
+    notifies :run, "ruby_block[Set writeable dirs for #{site['name']} efter git]"
+    notifies :compile, "compass_project[Compile sass for #{site['name']} efter git]"
   end
 
 
@@ -144,28 +147,62 @@ node['nginx']['sites'].each do |site|
     not_if { site['composer_update'] }
   end
 
-  # Compass compile
-  compass_project site['name'] do
+  # Compass compile without git
+  compass_project "Compile sass for #{site['name']}" do
     path compass_path
     action :compile
     user deploy_usr
     only_if { site['compass_compile'] }
+    not_if { site['git'] }
   end
 
-  # Set writeable directories
-  if site['writeable_dirs'].kind_of?(Array)
-    site['writeable_dirs'].each do |dir_path|
-      dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1] == '/'
-      execute "Make #{dir_path} owned by #{deploy_usr}:www-data" do
-        command "chown -R #{deploy_usr}:www-data #{dir_path}"
-        action :run
-        only_if { ::File.directory?(dir_path) }
-      end
-      execute "Make #{dir_path} writeable by both #{deploy_usr} and www-data" do
-        command "chmod -R 775 #{dir_path}"
-        only_if { ::File.directory?(dir_path) }
+  # Compass compile triggered by git
+  compass_project "Compile sass for #{site['name']} after git sync" do
+    path compass_path
+    action :nothing
+    user deploy_usr
+    only_if { site['compass_compile'] }
+  end
+
+  # Set writeable directories without git
+  ruby_block "Set writeable dirs for #{site['name']}" do
+    block do
+      site['writeable_dirs'].each do |dir_path|
+        dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1]=='/'
+        execute "Set owner of #{dir_path} to #{deploy_usr}:www-data" do
+          command "chown -R #{deploy_usr}:www-data #{dir_path}"
+          action :run
+          only_if { ::File.directory?(dir_path) }
+        end
+        execute "Change mode of #{dir_path} to 775" do
+          command "chmod -R 775 #{dir_path}"
+          only_if { ::File.directory?(dir_path) }
+        end
       end
     end
+    action :run
+    only_if { site['writeable_dirs'].kind_of?(Array) }
+    not_if { site['git'] }
+  end
+
+  # Set writeable directories after git sync
+  ruby_block "Set writeable dirs for #{site['name']} after git sync" do
+    block do
+      site['writeable_dirs'].each do |dir_path|
+        dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1]=='/'
+        execute "Set owner of #{dir_path} to #{deploy_usr}:www-data" do
+          command "chown -R #{deploy_usr}:www-data #{dir_path}"
+          action :run
+          only_if { ::File.directory?(dir_path) }
+        end
+        execute "Change mode of #{dir_path} to 775" do
+          command "chmod -R 775 #{dir_path}"
+          only_if { ::File.directory?(dir_path) }
+        end
+      end
+    end
+    action :nothing
+    only_if { site['writeable_dirs'].kind_of?(Array) }
   end
 
   custom_data = { 'environment' => site['environment'] }
