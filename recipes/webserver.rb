@@ -89,9 +89,9 @@ end
 node['nginx']['sites'].each do |site|
 
   git_path = "#{site['base_path']}/#{site['git_subpath']}" if site['git']
-  composer_path = "#{site['base_path']}/#{site['composer_subpath']}" if site['composer_update']
-  artisan_path = "#{site['base_path']}/#{site['artisan_subpath']}" if site['artisan_migrate']
-  compass_path = "#{site['base_path']}/#{site['compass_subpath']}" if site['compass_compile']
+  composer_path = "#{site['base_path']}/#{site['composer_subpath']}" if site['composer_update'] # rubocop:disable LineLength
+  artisan_path = "#{site['base_path']}/#{site['artisan_subpath']}" if site['artisan_migrate'] # rubocop:disable LineLength
+  compass_path = "#{site['base_path']}/#{site['compass_subpath']}" if site['compass_compile'] # rubocop:disable LineLength
   webroot_path = "#{site['base_path']}/#{site['webroot_subpath']}"
 
   # Sync with git repository
@@ -105,8 +105,8 @@ node['nginx']['sites'].each do |site|
     ssh_wrapper "/home/#{deploy_usr}/git_wrapper.sh"
     only_if { site['git'] && ::File.exist?("/home/#{deploy_usr}/.ssh/git_rsa") }
     notifies :run, "execute[Composer update #{site['name']} after git sync]"
-    notifies :run, "ruby_block[Set writeable dirs for #{site['name']} efter git]"
-    notifies :compile, "compass_project[Compile sass for #{site['name']} efter git]"
+    notifies :run, "ruby_block[Set writeable dirs for #{site['name']} efter git]" # rubocop:disable LineLength
+    notifies :compile, "compass_project[Compile sass for #{site['name']} efter git]" # rubocop:disable LineLength
   end
 
 
@@ -168,7 +168,7 @@ node['nginx']['sites'].each do |site|
   ruby_block "Set writeable dirs for #{site['name']}" do
     block do
       site['writeable_dirs'].each do |dir_path|
-        dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1]=='/'
+        dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1] == '/' # rubocop:disable LineLength
         execute "Set owner of #{dir_path} to #{deploy_usr}:www-data" do
           command "chown -R #{deploy_usr}:www-data #{dir_path}"
           action :run
@@ -189,7 +189,7 @@ node['nginx']['sites'].each do |site|
   ruby_block "Set writeable dirs for #{site['name']} after git sync" do
     block do
       site['writeable_dirs'].each do |dir_path|
-        dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1]=='/'
+        dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1] == '/' # rubocop:disable LineLength
         execute "Set owner of #{dir_path} to #{deploy_usr}:www-data" do
           command "chown -R #{deploy_usr}:www-data #{dir_path}"
           action :run
