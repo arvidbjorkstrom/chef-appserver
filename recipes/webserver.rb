@@ -89,9 +89,9 @@ end
 node['nginx']['sites'].each do |site|
 
   git_path = "#{site['base_path']}/#{site['git_subpath']}" if site['git']
-  composer_path = "#{site['base_path']}/#{site['composer_subpath']}"
-  artisan_path = "#{site['base_path']}/#{site['artisan_subpath']}"
-  compass_path = "#{site['base_path']}/#{site['compass_subpath']}"
+  composer_path = "#{site['base_path']}/#{site['composer_subpath']}" if site['composer_update']
+  artisan_path = "#{site['base_path']}/#{site['artisan_subpath']}" if site['artisan_migrate']
+  compass_path = "#{site['base_path']}/#{site['compass_subpath']}" if site['compass_compile']
   webroot_path = "#{site['base_path']}/#{site['webroot_subpath']}"
 
   git "Syncing git repository for #{site['name']}" do
