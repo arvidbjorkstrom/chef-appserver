@@ -99,7 +99,6 @@ node['nginx']['sites'].each do |site|
     destination git_path
     repository site['git_repo']
     revision site['git_branch']
-    checkout_branch site['git_branch']
     action :sync
     user deploy_usr
     ssh_wrapper "/home/#{deploy_usr}/git_wrapper.sh"
