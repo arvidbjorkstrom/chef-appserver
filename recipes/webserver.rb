@@ -105,7 +105,7 @@ node['nginx']['sites'].each do |site|
     only_if { site['git'] && ::File.exist?("/home/#{deploy_usr}/.ssh/git_rsa") }
     notifies :run, "execute[Composer update #{site['name']} after git sync]"
     notifies :run, "ruby_block[Set writeable dirs for #{site['name']} after git sync]" # rubocop:disable LineLength
-    notifies :compile, "compass_project[Compile sass for #{site['name']} after git sync]" # rubocop:disable LineLength
+    notifies :compile, "compass_project[Compile sass for #{site['name']} after git sync]", :immediately # rubocop:disable LineLength
   end
 
 
