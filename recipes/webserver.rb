@@ -164,24 +164,19 @@ node['nginx']['sites'].each do |site|
   end
 
   # Set writeable directories without git
-  ruby_block "Set writeable dirs for #{site['name']}" do
-    block do
-      site['writeable_dirs'].each do |dir_path|
-        dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1] == '/' # rubocop:disable LineLength
-        execute "Set owner of #{dir_path} to #{deploy_usr}:www-data" do
-          command "chown -R #{deploy_usr}:www-data #{dir_path}"
-          action :run
-          only_if { ::File.directory?(dir_path) }
-        end
-        execute "Change mode of #{dir_path} to 775" do
-          command "chmod -R 775 #{dir_path}"
-          only_if { ::File.directory?(dir_path) }
-        end
+  if site['writeable_dirs'].kind_of?(Array) && !site['git']
+    site['writeable_dirs'].each do |dir_path|
+      dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1] == '/' # rubocop:disable LineLength
+      execute "Set owner of #{dir_path} to #{deploy_usr}:www-data" do
+        command "chown -R #{deploy_usr}:www-data #{dir_path}"
+        action :run
+        only_if { ::File.directory?(dir_path) }
+      end
+      execute "Change mode of #{dir_path} to 775" do
+        command "chmod -R 775 #{dir_path}"
+        only_if { ::File.directory?(dir_path) }
       end
     end
-    action :run
-    only_if { site['writeable_dirs'].kind_of?(Array) }
-    not_if { site['git'] }
   end
 
   # Set writeable directories after git sync
@@ -189,15 +184,12 @@ node['nginx']['sites'].each do |site|
     block do
       site['writeable_dirs'].each do |dir_path|
         dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1] == '/' # rubocop:disable LineLength
-        execute "Set owner of #{dir_path} to #{deploy_usr}:www-data" do
-          command "chown -R #{deploy_usr}:www-data #{dir_path}"
-          action :run
-          only_if { ::File.directory?(dir_path) }
-        end
-        execute "Change mode of #{dir_path} to 775" do
-          command "chmod -R 775 #{dir_path}"
-          only_if { ::File.directory?(dir_path) }
-        end
+
+        r = Chef::Resource::Execute.new("Set owner of #{dir_path} to #{deploy_usr}:www-data", run_context)
+        r.command "chown -R #{deploy_usr}:www-data #{dir_path}"
+
+        r = Chef::Resource::Execute.new("Change mode of #{dir_path} to 775", run_context)
+        r.command "chmod -R 775 #{dir_path}"
       end
     end
     action :nothing
