@@ -187,9 +187,11 @@ node['nginx']['sites'].each do |site|
 
         r = Chef::Resource::Execute.new("Set owner of #{dir_path} to #{deploy_usr}:www-data", run_context)
         r.command "chown -R #{deploy_usr}:www-data #{dir_path}"
+        r.run_action(:run)
 
         r = Chef::Resource::Execute.new("Change mode of #{dir_path} to 775", run_context)
         r.command "chmod -R 775 #{dir_path}"
+        r.run_action(:run)
       end
     end
     action :nothing
