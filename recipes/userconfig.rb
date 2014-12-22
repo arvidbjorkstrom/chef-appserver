@@ -8,16 +8,15 @@ end
 if Chef::Config[:solo] && !chef_solo_search_installed?
   Chef::Log.warn('This recipe uses search. Chef Solo does not support search unless you install the chef-solo-search cookbook.') # rubocop:disable LineLength
 else
-  # Make suer theme folder exist before adding custom theme
-  directory "/home/#{u['id']}/.oh-my-zsh/custom/themes" do
-    owner u['id']
-    group u['id']
-    mode '0775'
-    action :create
-    not_if { ::File.directory?("/home/#{u['id']}/.oh-my-zsh/custom/themes") }
-  end
   # Add custom agnoster2 oh-my-zsh theme
   search(:users, 'shell:*zsh NOT action:remove').each do |u|
+    directory "/home/#{u['id']}/.oh-my-zsh/custom/themes" do
+      owner u['id']
+      group u['id']
+      mode '0775'
+      action :create
+      not_if { ::File.directory?("/home/#{u['id']}/.oh-my-zsh/custom/themes") }
+    end
     template "/home/#{u['id']}/.oh-my-zsh/custom/themes/agnoster2.zsh-theme" do
       source 'agnoster2.zsh-theme.erb'
       owner u['id']
