@@ -10,7 +10,7 @@ if Chef::Config[:solo] && !chef_solo_search_installed?
 else
   # Add custom agnoster2 oh-my-zsh theme
   search(:users, 'shell:*zsh NOT action:remove').each do |u|
-    template "/home/#{u['id']}/.oh-my-zsh/themes/agnoster2.zsh-theme" do
+    template "/home/#{u['id']}/.oh-my-zsh/custom/themes/agnoster2.zsh-theme" do
       source 'agnoster2.zsh-theme.erb'
       owner u['id']
       group u['id']
