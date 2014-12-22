@@ -20,6 +20,7 @@ depends 'users'
 depends 'sudo'
 depends 'oh-my-zsh'
 depends 'mysql', '~>5.4.4'
+depends 'mysql-chef_gem', '~>0.0.5'
 depends 'database'
 depends 'nginx' # https://github.com/phlipper/chef-nginx
 depends 'compass' # https://github.com/phlipper/chef-nginx
