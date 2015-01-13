@@ -198,7 +198,38 @@ node['nginx']['sites'].each do |site|
     only_if { site['writeable_dirs'].kind_of?(Array) }
   end
 
-  custom_data = { 'environment' => site['environment'] }
+  if site['ssl']
+    directory '/etc/nginx/ssl' do
+      owner 'root'
+      group 'root'
+      mode '0775'
+      action :create
+      not_if { ::File.directory?('/etc/nginx/ssl') }
+    end
+
+    file "/etc/nginx/ssl/#{site['name']}.crt" do
+      content site['ssl_crt']
+      owner 'root'
+      group 'root'
+      mode '0400'
+      not_if { ::File.exist?("/etc/nginx/ssl/#{site['name']}/.crt") }
+    end
+    file "/etc/nginx/ssl/#{site['name']}.key" do
+      content site['ssl_key']
+      owner 'root'
+      group 'root'
+      mode '0400'
+      not_if { ::File.exist?("/etc/nginx/ssl/#{site['name']}/.crt") }
+    end
+    custom_data = {
+      'environment' => site['environment'],
+      'ssl' => true,
+      'ssl_crt' => "/etc/nginx/ssl/#{site['name']}.crt",
+      'ssl_key' => "/etc/nginx/ssl/#{site['name']}.key"
+    }
+  else
+    custom_data = { 'environment' => site['environment'], 'ssl' => false }
+  end
 
   # Set up nginx server block
   nginx_site site['name'] do
