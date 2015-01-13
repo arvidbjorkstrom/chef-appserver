@@ -28,13 +28,11 @@ else
 
   # Create private keys for git use
   search(:users, 'git_key:* NOT git_key:Add* NOT action:remove').each do |u|
-    template "Add git key to user #{u['id']}" do
-      path "/home/#{u['id']}/.ssh/git_rsa"
-      source 'ssh_key.erb'
+    file "/home/#{u['id']}/.ssh/git_rsa" do
+      content u['git_key']
       owner u['id']
       group u['id']
       mode '0400'
-      variables ssh_key: u['git_key']
       only_if { ::File.directory?("/home/#{u['id']}/.ssh") }
       not_if { ::File.exist?("/home/#{u['id']}/.ssh/git_rsa") }
     end
