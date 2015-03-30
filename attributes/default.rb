@@ -3,6 +3,9 @@
 # Attributes:: default
 #
 
+# Swap file, size in MB
+default['swapsize'] = 0
+
 # Timezone
 default['tz'] = 'Europe/Stockholm'
 
