@@ -223,12 +223,23 @@ node['nginx']['sites'].each do |site|
     end
     custom_data = {
       'environment' => site['environment'],
+      'db_host' => site['db_host'],
+      'db_database' => site['db_database'],
+      'db_username' => site['db_username'],
+      'db_password' => site['db_password'],
       'ssl' => true,
       'ssl_crt' => "/etc/nginx/ssl/#{site['name']}.crt",
       'ssl_key' => "/etc/nginx/ssl/#{site['name']}.key"
     }
   else
-    custom_data = { 'environment' => site['environment'], 'ssl' => false }
+    custom_data = {
+      'environment' => site['environment'],
+      'db_host' => site['db_host'],
+      'db_database' => site['db_database'],
+      'db_username' => site['db_username'],
+      'db_password' => site['db_password'],
+      'ssl' => false
+    }
   end
 
   # Set up nginx server block

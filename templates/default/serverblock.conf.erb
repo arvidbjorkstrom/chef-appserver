@@ -58,6 +58,20 @@ server {
     fastcgi_param  ENVIRONEMNT        <%= node.chef_environment %>;
     fastcgi_param  ENV                <%= node.chef_environment %>;
     <% end -%>
+    <% if @custom_data -%>
+      <% if @custom_data['db_host'] -%>
+    fastcgi_param  DB_HOST  <%= @custom_data['db_host'] %>;
+      <% end -%>
+      <% if @custom_data['db_database'] -%>
+    fastcgi_param  DB_DATABASE  <%= @custom_data['db_database'] %>;
+      <% end -%>
+      <% if @custom_data['db_username'] -%>
+    fastcgi_param  DB_USERNAME  <%= @custom_data['db_username'] %>;
+      <% end -%>
+      <% if @custom_data['db_password'] -%>
+    fastcgi_param  DB_PASSWORD  <%= @custom_data['db_password'] %>;
+      <% end -%>
+    <% end -%>
   }
   <% end -%>
 
