@@ -89,7 +89,7 @@ end
 node['nginx']['sites'].each do |site|
 
   git_path = "#{site['base_path']}/#{site['git_subpath']}" if site['git']
-  composer_path = "#{site['base_path']}/#{site['composer_subpath']}" if site['composer_update'] # rubocop:disable LineLength
+  composer_path = "#{site['base_path']}/#{site['composer_subpath']}" if site['composer_install'] # rubocop:disable LineLength
   artisan_path = "#{site['base_path']}/#{site['artisan_subpath']}" if site['artisan_migrate'] # rubocop:disable LineLength
   compass_path = "#{site['base_path']}/#{site['compass_subpath']}" if site['compass_compile'] # rubocop:disable LineLength
   webroot_path = "#{site['base_path']}/#{site['webroot_subpath']}"
@@ -153,7 +153,7 @@ node['nginx']['sites'].each do |site|
     notifies :restart, 'service[php-fpm]'
     notifies :restart, 'service[nginx]'
     notifies :sync, "git[Syncing git repository for #{site['name']}]"
-    notifies :run, "execute[Composer update #{site['name']}]"
+    notifies :run, "execute[Composer install #{site['name']}]"
     notifies :run, "execute[Artisan migrate #{site['name']}]"
   end
 
@@ -166,47 +166,47 @@ node['nginx']['sites'].each do |site|
     user deploy_usr
     ssh_wrapper "/home/#{deploy_usr}/git_wrapper.sh"
     only_if { site['git'] && ::File.exist?("/home/#{deploy_usr}/.ssh/git_rsa") }
-    notifies :run, "execute[Composer update #{site['name']} after git sync]"
+    notifies :run, "execute[Composer install #{site['name']} after git sync]"
     notifies :run, "ruby_block[Set writeable dirs for #{site['name']} after git sync]" # rubocop:disable LineLength
     notifies :compile, "compass_project[Compile sass for #{site['name']} after git sync]", :immediately # rubocop:disable LineLength
   end
 
 
-  # Composer update triggered by git sync
-  execute "Composer update #{site['name']} after git sync" do
-    command "composer update -n -d #{composer_path}"
+  # Composer install triggered by git sync
+  execute "Composer install #{site['name']} after git sync" do
+    command "composer install -n -d #{composer_path}"
     action :nothing
     user deploy_usr
-    only_if { site['git'] && site['composer_update'] }
+    only_if { site['git'] && site['composer_install'] }
     notifies :run, "execute[Artisan migrate #{site['name']} after composer]"
   end
 
-  # Composer update without git
-  execute "Composer update #{site['name']}" do
-    command "composer update -n -d #{composer_path}"
+  # Composer install without git
+  execute "Composer install #{site['name']}" do
+    command "composer install -n -d #{composer_path}"
     action :nothing
     user deploy_usr
-    only_if { site['composer_update'] }
+    only_if { site['composer_install'] }
     not_if { site['git'] }
     notifies :run, "execute[Artisan migrate #{site['name']} after composer]"
   end
 
 
-  # Artisan migrate triggered by composer update
+  # Artisan migrate triggered by composer install
   execute "Artisan migrate #{site['name']} after composer" do
     command "php #{artisan_path} --env=#{site['environment']} migrate"
     action :nothing
     user deploy_usr
-    only_if { site['composer_update'] && site['artisan_migrate'] }
+    only_if { site['composer_install'] && site['artisan_migrate'] }
   end
 
-  # Artisan migrate without composer update
+  # Artisan migrate without composer install
   execute "Artisan migrate #{site['name']}" do
     command "php #{artisan_path} --env=#{site['environment']} migrate"
     action :nothing
     user deploy_usr
     only_if { site['artisan_migrate'] }
-    not_if { site['composer_update'] }
+    not_if { site['composer_install'] }
   end
 
   # Compass compile without git
