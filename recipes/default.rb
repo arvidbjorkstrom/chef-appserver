@@ -13,7 +13,8 @@ include_recipe 'sudo'
 include_recipe 'oh-my-zsh'
 
 if node['swapsize'] > 0
-  swap_file '/mnt/swap' do
+  swap_file "Create #{swapfilesize}MB swap file at /mnt/swap" do
+    path '/mnt/swap'
     size node['swapsize']
   end
 end
