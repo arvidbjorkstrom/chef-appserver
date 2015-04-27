@@ -94,110 +94,6 @@ node['nginx']['sites'].each do |site|
   compass_path = "#{site['base_path']}/#{site['compass_subpath']}" if site['compass_compile'] # rubocop:disable LineLength
   webroot_path = "#{site['base_path']}/#{site['webroot_subpath']}"
 
-  # Sync with git repository
-  git "Syncing git repository for #{site['name']}" do
-    destination git_path
-    repository site['git_repo']
-    revision site['git_branch']
-    action :sync
-    user deploy_usr
-    ssh_wrapper "/home/#{deploy_usr}/git_wrapper.sh"
-    only_if { site['git'] && ::File.exist?("/home/#{deploy_usr}/.ssh/git_rsa") }
-    notifies :run, "execute[Composer update #{site['name']} after git sync]"
-    notifies :run, "ruby_block[Set writeable dirs for #{site['name']} after git sync]" # rubocop:disable LineLength
-    notifies :compile, "compass_project[Compile sass for #{site['name']} after git sync]", :immediately # rubocop:disable LineLength
-  end
-
-
-  # Composer update triggered by git sync
-  execute "Composer update #{site['name']} after git sync" do
-    command "composer update -n -d #{composer_path}"
-    action :nothing
-    user deploy_usr
-    only_if { site['git'] && site['composer_update'] }
-    notifies :run, "execute[Artisan migrate #{site['name']} after composer]"
-  end
-
-  # Composer update without git
-  execute "Composer update #{site['name']}" do
-    command "composer update -n -d #{composer_path}"
-    action :run
-    user deploy_usr
-    only_if { site['composer_update'] }
-    not_if { site['git'] }
-    notifies :run, "execute[Artisan migrate #{site['name']} after composer]"
-  end
-
-
-  # Artisan migrate triggered by composer update
-  execute "Artisan migrate #{site['name']} after composer" do
-    command "php #{artisan_path} --env=#{site['environment']} migrate"
-    action :nothing
-    user deploy_usr
-    only_if { site['composer_update'] && site['artisan_migrate'] }
-  end
-
-  # Artisan migrate without composer update
-  execute "Artisan migrate #{site['name']}" do
-    command "php #{artisan_path} --env=#{site['environment']} migrate"
-    action :run
-    user deploy_usr
-    only_if { site['artisan_migrate'] }
-    not_if { site['composer_update'] }
-  end
-
-  # Compass compile without git
-  compass_project "Compile sass for #{site['name']}" do
-    path compass_path
-    action :compile
-    user deploy_usr
-    only_if { site['compass_compile'] }
-    not_if { site['git'] }
-  end
-
-  # Compass compile triggered by git
-  compass_project "Compile sass for #{site['name']} after git sync" do
-    path compass_path
-    action :nothing
-    user deploy_usr
-    only_if { site['compass_compile'] }
-  end
-
-  # Set writeable directories without git
-  if site['writeable_dirs'].kind_of?(Array) && !site['git']
-    site['writeable_dirs'].each do |dir_path|
-      dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1] == '/' # rubocop:disable LineLength
-      execute "Set owner of #{dir_path} to #{deploy_usr}:www-data" do
-        command "chown -R #{deploy_usr}:www-data #{dir_path}"
-        action :run
-        only_if { ::File.directory?(dir_path) }
-      end
-      execute "Change mode of #{dir_path} to 775" do
-        command "chmod -R 775 #{dir_path}"
-        only_if { ::File.directory?(dir_path) }
-      end
-    end
-  end
-
-  # Set writeable directories after git sync
-  ruby_block "Set writeable dirs for #{site['name']} after git sync" do
-    block do
-      site['writeable_dirs'].each do |dir_path|
-        dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1] == '/' # rubocop:disable LineLength
-
-        r = Chef::Resource::Execute.new("Set owner of #{dir_path} to #{deploy_usr}:www-data", run_context)
-        r.command "chown -R #{deploy_usr}:www-data #{dir_path}"
-        r.run_action(:run)
-
-        r = Chef::Resource::Execute.new("Change mode of #{dir_path} to 775", run_context)
-        r.command "chmod -R 775 #{dir_path}"
-        r.run_action(:run)
-      end
-    end
-    action :nothing
-    only_if { site['writeable_dirs'].kind_of?(Array) }
-  end
-
   if site['ssl']
     directory '/etc/nginx/ssl' do
       owner 'root'
@@ -256,5 +152,112 @@ node['nginx']['sites'].each do |site|
     action [:create, :enable]
     notifies :restart, 'service[php-fpm]'
     notifies :restart, 'service[nginx]'
+    notifies :sync, "git[Syncing git repository for #{site['name']}]"
+    notifies :run, "execute[Composer update #{site['name']}]"
+    notifies :run, "execute[Artisan migrate #{site['name']}]"
+  end
+
+  # Sync with git repository
+  git "Syncing git repository for #{site['name']}" do
+    destination git_path
+    repository site['git_repo']
+    revision site['git_branch']
+    action :nothing
+    user deploy_usr
+    ssh_wrapper "/home/#{deploy_usr}/git_wrapper.sh"
+    only_if { site['git'] && ::File.exist?("/home/#{deploy_usr}/.ssh/git_rsa") }
+    notifies :run, "execute[Composer update #{site['name']} after git sync]"
+    notifies :run, "ruby_block[Set writeable dirs for #{site['name']} after git sync]" # rubocop:disable LineLength
+    notifies :compile, "compass_project[Compile sass for #{site['name']} after git sync]", :immediately # rubocop:disable LineLength
+  end
+
+
+  # Composer update triggered by git sync
+  execute "Composer update #{site['name']} after git sync" do
+    command "composer update -n -d #{composer_path}"
+    action :nothing
+    user deploy_usr
+    only_if { site['git'] && site['composer_update'] }
+    notifies :run, "execute[Artisan migrate #{site['name']} after composer]"
+  end
+
+  # Composer update without git
+  execute "Composer update #{site['name']}" do
+    command "composer update -n -d #{composer_path}"
+    action :nothing
+    user deploy_usr
+    only_if { site['composer_update'] }
+    not_if { site['git'] }
+    notifies :run, "execute[Artisan migrate #{site['name']} after composer]"
+  end
+
+
+  # Artisan migrate triggered by composer update
+  execute "Artisan migrate #{site['name']} after composer" do
+    command "php #{artisan_path} --env=#{site['environment']} migrate"
+    action :nothing
+    user deploy_usr
+    only_if { site['composer_update'] && site['artisan_migrate'] }
+  end
+
+  # Artisan migrate without composer update
+  execute "Artisan migrate #{site['name']}" do
+    command "php #{artisan_path} --env=#{site['environment']} migrate"
+    action :nothing
+    user deploy_usr
+    only_if { site['artisan_migrate'] }
+    not_if { site['composer_update'] }
+  end
+
+  # Compass compile without git
+  compass_project "Compile sass for #{site['name']}" do
+    path compass_path
+    action :compile
+    user deploy_usr
+    only_if { site['compass_compile'] }
+    not_if { site['git'] }
+  end
+
+  # Compass compile triggered by git
+  compass_project "Compile sass for #{site['name']} after git sync" do
+    path compass_path
+    action :nothing
+    user deploy_usr
+    only_if { site['compass_compile'] }
+  end
+
+  # Set writeable directories without git
+  if site['writeable_dirs'].kind_of?(Array) && !site['git']
+    site['writeable_dirs'].each do |dir_path|
+      dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1] == '/' # rubocop:disable LineLength
+      execute "Set owner of #{dir_path} to #{deploy_usr}:www-data" do
+        command "chown -R #{deploy_usr}:www-data #{dir_path}"
+        action :run
+        only_if { ::File.directory?(dir_path) }
+      end
+      execute "Change mode of #{dir_path} to 775" do
+        command "chmod -R 775 #{dir_path}"
+        only_if { ::File.directory?(dir_path) }
+      end
+    end
+  end
+
+  # Set writeable directories after git sync
+  ruby_block "Set writeable dirs for #{site['name']} after git sync" do
+    block do
+      site['writeable_dirs'].each do |dir_path|
+        dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1] == '/' # rubocop:disable LineLength
+
+        r = Chef::Resource::Execute.new("Set owner of #{dir_path} to #{deploy_usr}:www-data", run_context)
+        r.command "chown -R #{deploy_usr}:www-data #{dir_path}"
+        r.run_action(:run)
+
+        r = Chef::Resource::Execute.new("Change mode of #{dir_path} to 775", run_context)
+        r.command "chmod -R 775 #{dir_path}"
+        r.run_action(:run)
+      end
+    end
+    action :nothing
+    only_if { site['writeable_dirs'].kind_of?(Array) }
   end
 end
