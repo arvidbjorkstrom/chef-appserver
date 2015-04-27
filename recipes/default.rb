@@ -18,6 +18,7 @@ if node['swapsize'] > 0
   swap_file "Create #{swapfilesize}MB swap file at /mnt/swap" do
     path '/mnt/swap'
     size swapfilesize
+    persist true
   end
 end
 
