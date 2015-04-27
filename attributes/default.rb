@@ -3,7 +3,7 @@
 # Attributes:: default
 #
 
-# Swap file, size in MB
+# Swap file, multiples of the server memory size
 default['swapsize'] = 0
 
 # Timezone

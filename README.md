@@ -58,6 +58,9 @@ Nothing here yet.
 
 ```ruby
 
+# Swap file, multiples of the server memory size
+default['swapsize'] = 0
+
 # Timezone
 default['tz'] = 'Europe/Stockholm'
 

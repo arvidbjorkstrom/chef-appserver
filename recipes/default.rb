@@ -13,9 +13,11 @@ include_recipe 'sudo'
 include_recipe 'oh-my-zsh'
 
 if node['swapsize'] > 0
+  servermemory = `memsize=$(free -b | grep "Mem:" | awk '{print $2}');echo "$(($memsize/1024/1024))";`
+  swapfilesize = servermemory.to_i * node['swapsize'].to_i
   swap_file "Create #{swapfilesize}MB swap file at /mnt/swap" do
     path '/mnt/swap'
-    size node['swapsize']
+    size swapfilesize
   end
 end
 
