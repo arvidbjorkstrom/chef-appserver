@@ -95,27 +95,27 @@ node['nginx']['sites'].each do |site|
   webroot_path = "#{site['base_path']}/#{site['webroot_subpath']}"
 
   if site['ssl']
-    directory '/etc/nginx/ssl' do
+    directory "#{node['nginx']['dir']}/ssl" do
       owner 'root'
       group 'root'
       mode '0775'
       action :create
-      not_if { ::File.directory?('/etc/nginx/ssl') }
+      not_if { ::File.directory?("#{node['nginx']['dir']}/ssl") }
     end
 
-    file "/etc/nginx/ssl/#{site['name']}.crt" do
+    file "#{node['nginx']['dir']}/ssl/#{site['name']}.crt" do
       content site['ssl_crt']
       owner 'root'
       group 'root'
       mode '0400'
-      not_if { ::File.exist?("/etc/nginx/ssl/#{site['name']}/.crt") }
+      not_if { ::File.exist?("#{node['nginx']['dir']}/ssl/#{site['name']}/.crt") }
     end
-    file "/etc/nginx/ssl/#{site['name']}.key" do
+    file "#{node['nginx']['dir']}/ssl/#{site['name']}.key" do
       content site['ssl_key']
       owner 'root'
       group 'root'
       mode '0400'
-      not_if { ::File.exist?("/etc/nginx/ssl/#{site['name']}/.crt") }
+      not_if { ::File.exist?("#{node['nginx']['dir']}/ssl/#{site['name']}/.crt") }
     end
     custom_data = {
       'environment' => site['environment'],
@@ -124,8 +124,8 @@ node['nginx']['sites'].each do |site|
       'db_username' => site['db_username'],
       'db_password' => site['db_password'],
       'ssl' => true,
-      'ssl_crt' => "/etc/nginx/ssl/#{site['name']}.crt",
-      'ssl_key' => "/etc/nginx/ssl/#{site['name']}.key"
+      'ssl_crt' => "#{node['nginx']['dir']}/ssl/#{site['name']}.crt",
+      'ssl_key' => "#{node['nginx']['dir']}/ssl/#{site['name']}.key"
     }
   else
     custom_data = {
