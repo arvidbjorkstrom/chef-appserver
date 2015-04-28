@@ -1,3 +1,13 @@
+LineLength:
+  Max: 120
+  Exclude:
+    - "**/attributes/*.rb"
+    - "**/metadata.rb"
+
+HashSyntax:
+  Exclude:
+    - "**/Berksfile"
+
 EmptyLines:
   Enabled: false
 

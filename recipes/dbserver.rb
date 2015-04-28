@@ -17,7 +17,6 @@ mysql_connection = {
 package 'unzip'
 
 node['mysql']['databases'].each do |db|
-
   if db['overwrite']
     mysql_database db['database'] do
       connection mysql_connection

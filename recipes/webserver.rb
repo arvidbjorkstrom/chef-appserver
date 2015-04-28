@@ -34,7 +34,7 @@ service 'php-fpm' do
 end
 
 # PHP with plugins
-%w(php5 php5-cli php5-mysql php5-curl php5-mcrypt php5-gd imagemagick php5-imagick).each do |pkg| # rubocop:disable LineLength
+%w(php5 php5-cli php5-mysql php5-curl php5-mcrypt php5-gd imagemagick php5-imagick).each do |pkg|
   package pkg do
     action :install
   end
@@ -69,7 +69,7 @@ execute 'Upgrade Composer' do
   action :run
 end
 execute 'Install Composer' do # ~FC041
-  command 'curl -sS https://getcomposer.org/installer | php;mv composer.phar /usr/local/bin/composer' # rubocop:disable LineLength
+  command 'curl -sS https://getcomposer.org/installer | php;mv composer.phar /usr/local/bin/composer'
   not_if { ::File.exist?('/usr/local/bin/composer') }
   action :run
 end
@@ -87,11 +87,10 @@ directory '/var/www' do
 end
 
 node['nginx']['sites'].each do |site|
-
   git_path = "#{site['base_path']}/#{site['git_subpath']}" if site['git']
-  composer_path = "#{site['base_path']}/#{site['composer_subpath']}" if site['composer_install'] # rubocop:disable LineLength
-  artisan_path = "#{site['base_path']}/#{site['artisan_subpath']}" if site['artisan_migrate'] # rubocop:disable LineLength
-  compass_path = "#{site['base_path']}/#{site['compass_subpath']}" if site['compass_compile'] # rubocop:disable LineLength
+  composer_path = "#{site['base_path']}/#{site['composer_subpath']}" if site['composer_install']
+  artisan_path = "#{site['base_path']}/#{site['artisan_subpath']}" if site['artisan_migrate']
+  compass_path = "#{site['base_path']}/#{site['compass_subpath']}" if site['compass_compile']
   webroot_path = "#{site['base_path']}/#{site['webroot_subpath']}"
 
   if site['ssl']
@@ -167,8 +166,8 @@ node['nginx']['sites'].each do |site|
     ssh_wrapper "/home/#{deploy_usr}/git_wrapper.sh"
     only_if { site['git'] && ::File.exist?("/home/#{deploy_usr}/.ssh/git_rsa") }
     notifies :run, "execute[Composer install #{site['name']} after git sync]"
-    notifies :run, "ruby_block[Set writeable dirs for #{site['name']} after git sync]" # rubocop:disable LineLength
-    notifies :compile, "compass_project[Compile sass for #{site['name']} after git sync]", :immediately # rubocop:disable LineLength
+    notifies :run, "ruby_block[Set writeable dirs for #{site['name']} after git sync]"
+    notifies :compile, "compass_project[Compile sass for #{site['name']} after git sync]", :immediately
   end
 
 
@@ -227,9 +226,9 @@ node['nginx']['sites'].each do |site|
   end
 
   # Set writeable directories without git
-  if site['writeable_dirs'].kind_of?(Array) && !site['git']
+  if site['writeable_dirs'].is_a?(Array) && !site['git']
     site['writeable_dirs'].each do |dir_path|
-      dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1] == '/' # rubocop:disable LineLength
+      dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1] == '/'
       execute "Set owner of #{dir_path} to #{deploy_usr}:www-data" do
         command "chown -R #{deploy_usr}:www-data #{dir_path}"
         action :run
@@ -246,7 +245,7 @@ node['nginx']['sites'].each do |site|
   ruby_block "Set writeable dirs for #{site['name']} after git sync" do
     block do
       site['writeable_dirs'].each do |dir_path|
-        dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1] == '/' # rubocop:disable LineLength
+        dir_path = "#{site['base_path']}/#{dir_path}" unless dir_path[0, 1] == '/'
 
         r = Chef::Resource::Execute.new("Set owner of #{dir_path} to #{deploy_usr}:www-data", run_context)
         r.command "chown -R #{deploy_usr}:www-data #{dir_path}"
@@ -258,6 +257,6 @@ node['nginx']['sites'].each do |site|
       end
     end
     action :nothing
-    only_if { site['writeable_dirs'].kind_of?(Array) }
+    only_if { site['writeable_dirs'].is_a?(Array) }
   end
 end

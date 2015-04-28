@@ -1,6 +1,6 @@
-source "https://api.berkshelf.com"
+source 'https://api.berkshelf.com'
 
 metadata
 
-cookbook "nginx", :github => "arvidbjorkstrom/chef-nginx"
-cookbook "compass", :github => "arvidbjorkstrom/chef-compass"
+cookbook 'nginx', :github => 'arvidbjorkstrom/chef-nginx'
+cookbook 'compass', :github => 'arvidbjorkstrom/chef-compass'
