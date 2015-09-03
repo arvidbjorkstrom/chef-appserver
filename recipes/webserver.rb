@@ -87,12 +87,13 @@ directory '/var/www' do
 end
 
 node['nginx']['sites'].each do |site|
+  webroot_path = "#{site['base_path']}/#{site['webroot_subpath']}"
   git_path = "#{site['base_path']}/#{site['git_subpath']}" if site['git']
   composer_path = "#{site['base_path']}/#{site['composer_subpath']}" if site['composer_install']
   artisan_path = "#{site['base_path']}/#{site['artisan_subpath']}" if site['artisan_migrate']
   compass_path = "#{site['base_path']}/#{site['compass_subpath']}" if site['compass_compile']
-  webroot_path = "#{site['base_path']}/#{site['webroot_subpath']}"
 
+  # Create ssl cert files
   if site['ssl']
     directory "#{node['nginx']['dir']}/ssl" do
       owner 'root'
@@ -116,28 +117,19 @@ node['nginx']['sites'].each do |site|
       mode '0400'
       not_if { ::File.exist?("#{node['nginx']['dir']}/ssl/#{site['name']}/.crt") }
     end
-    custom_data = {
-      'environment' => site['environment'],
-      'db_host' => site['db_host'],
-      'db_database' => site['db_database'],
-      'db_username' => site['db_username'],
-      'db_password' => site['db_password'],
-      'ssl' => true,
-      'ssl_crt' => "#{node['nginx']['dir']}/ssl/#{site['name']}.crt",
-      'ssl_key' => "#{node['nginx']['dir']}/ssl/#{site['name']}.key"
-    }
-  else
-    custom_data = {
-      'environment' => site['environment'],
-      'db_host' => site['db_host'],
-      'db_database' => site['db_database'],
-      'db_username' => site['db_username'],
-      'db_password' => site['db_password'],
-      'ssl' => false
-    }
   end
 
   # Set up nginx server block
+  custom_data = {
+    'environment' => site['environment'],
+    'db_host' => site['db_host'],
+    'db_database' => site['db_database'],
+    'db_username' => site['db_username'],
+    'db_password' => site['db_password'],
+    'ssl' => site['ssl'],
+    'ssl_crt' => "#{node['nginx']['dir']}/ssl/#{site['name']}.crt",
+    'ssl_key' => "#{node['nginx']['dir']}/ssl/#{site['name']}.key"
+  }
   nginx_site site['name'] do
     listen '*:80'
     host site['host']
@@ -149,6 +141,7 @@ node['nginx']['sites'].each do |site|
     template_cookbook site['template_cookbook']
     template_source site['template_source']
     action [:create, :enable]
+    not_if { ::File.exist?("#{node['nginx']['dir']}/sites-enabled/#{site['name']}") }
     notifies :restart, 'service[php-fpm]'
     notifies :restart, 'service[nginx]'
     notifies :sync, "git[Syncing git repository for #{site['name']}]"
@@ -156,18 +149,21 @@ node['nginx']['sites'].each do |site|
     notifies :run, "execute[Artisan migrate #{site['name']}]"
   end
 
+
   # Sync with git repository
   git "Syncing git repository for #{site['name']}" do
     destination git_path
     repository site['git_repo']
     revision site['git_branch']
-    action :nothing
+    action :sync
     user deploy_usr
     ssh_wrapper "/home/#{deploy_usr}/git_wrapper.sh"
     only_if { site['git'] && ::File.exist?("/home/#{deploy_usr}/.ssh/git_rsa") }
+    only_if { ::File.exist?("#{node['nginx']['dir']}/sites-enabled/#{site['name']}") }
     notifies :run, "execute[Composer install #{site['name']} after git sync]"
-    notifies :run, "ruby_block[Set writeable dirs for #{site['name']} after git sync]"
+    notifies :run, "execute[Artisan migrate #{site['name']} after git sync]"
     notifies :compile, "compass_project[Compile sass for #{site['name']} after git sync]", :immediately
+    notifies :run, "ruby_block[Set writeable dirs for #{site['name']} after git sync]"
   end
 
 
@@ -176,16 +172,19 @@ node['nginx']['sites'].each do |site|
     command "composer install -n -d #{composer_path}"
     action :nothing
     user deploy_usr
-    only_if { site['git'] && site['composer_install'] }
+    only_if { site['composer_install'] }
+    only_if { ::File.directory?("#{composer_path}") }
     notifies :run, "execute[Artisan migrate #{site['name']} after composer]"
   end
 
   # Composer install without git
   execute "Composer install #{site['name']}" do
     command "composer install -n -d #{composer_path}"
-    action :nothing
+    action :run
     user deploy_usr
     only_if { site['composer_install'] }
+    only_if { ::File.directory?("#{composer_path}") }
+    only_if { ::File.exist?("#{node['nginx']['dir']}/sites-enabled/#{site['name']}") }
     not_if { site['git'] }
     notifies :run, "execute[Artisan migrate #{site['name']} after composer]"
   end
@@ -196,17 +195,32 @@ node['nginx']['sites'].each do |site|
     command "php #{artisan_path} --env=#{site['environment']} migrate"
     action :nothing
     user deploy_usr
-    only_if { site['composer_install'] && site['artisan_migrate'] }
+    only_if { site['artisan_migrate'] }
+    only_if { ::File.directory?("#{artisan_path}") }
   end
 
-  # Artisan migrate without composer install
-  execute "Artisan migrate #{site['name']}" do
+  # Artisan migrate after git, when not running composer install
+  execute "Artisan migrate #{site['name']} after git sync" do
     command "php #{artisan_path} --env=#{site['environment']} migrate"
     action :nothing
     user deploy_usr
     only_if { site['artisan_migrate'] }
+    only_if { ::File.directory?("#{artisan_path}") }
     not_if { site['composer_install'] }
   end
+
+  # Artisan migrate without either composer or git
+  execute "Artisan migrate #{site['name']}" do
+    command "php #{artisan_path} --env=#{site['environment']} migrate"
+    action :run
+    user deploy_usr
+    only_if { site['artisan_migrate'] }
+    only_if { ::File.directory?("#{artisan_path}") }
+    only_if { ::File.exist?("#{node['nginx']['dir']}/sites-enabled/#{site['name']}") }
+    not_if { site['composer_install'] }
+    not_if { site['git'] }
+  end
+
 
   # Compass compile without git
   compass_project "Compile sass for #{site['name']}" do
@@ -214,6 +228,7 @@ node['nginx']['sites'].each do |site|
     action :compile
     user deploy_usr
     only_if { site['compass_compile'] }
+    only_if { ::File.directory?("#{compass_path}") }
     not_if { site['git'] }
   end
 
@@ -223,6 +238,7 @@ node['nginx']['sites'].each do |site|
     action :nothing
     user deploy_usr
     only_if { site['compass_compile'] }
+    only_if { ::File.directory?("#{compass_path}") }
   end
 
   # Set writeable directories without git
