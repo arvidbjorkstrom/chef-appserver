@@ -27,6 +27,8 @@ recipes should run on these platforms without error:
 * [mysql](http://community.opscode.com/cookbooks/mysql) Opscode LWRP Cookbook
 * [database](http://community.opscode.com/cookbooks/database) Opscode LWRP Cookbook
 * [nginx](https://github.com/phlipper/chef-nginx) Cookbook by Phil Cohen
+* [compass](https://github.com/arvidbjorkstrom/chef-compass) Cookbook by Arvid Björkström
+* [swap](http://community.opscode.com/cookbooks/swap) Cookbook by Seth Vargo
 
 ### Chef
 
@@ -79,7 +81,7 @@ default['mysql']['databases'] = [
 ]
 
 
-# NGINX
+# NGINX config and Site install & deploy
 default['nginx']['sites'] = [
   {
     'name' => 'domain.se',
