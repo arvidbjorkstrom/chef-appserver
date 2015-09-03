@@ -25,4 +25,4 @@ depends 'mysql-chef_gem', '~>0.0.5'
 depends 'nginx' # https://github.com/phlipper/chef-nginx
 depends 'compass' # https://github.com/phlipper/chef-nginx
 depends 'swap'
-cookbook 'nodejs', '~> 2.4.0'
+depends 'nodejs', '~> 2.4.0'
