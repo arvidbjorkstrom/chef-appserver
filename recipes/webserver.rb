@@ -20,6 +20,11 @@ end
 # Compass
 include_recipe 'compass'
 
+# Node JS & packages
+include_recipe 'nodejs'
+nodejs_npm 'bower'
+nodejs_npm 'gulp'
+
 # PHP FPM
 package 'php5-fpm' do
   action :install
@@ -92,6 +97,9 @@ node['nginx']['sites'].each do |site|
   composer_path = "#{site['base_path']}/#{site['composer_subpath']}" if site['composer_install']
   artisan_path = "#{site['base_path']}/#{site['artisan_subpath']}" if site['artisan_migrate']
   compass_path = "#{site['base_path']}/#{site['compass_subpath']}" if site['compass_compile']
+  npm_path = "#{site['base_path']}/#{site['npm_subpath']}" if site['npm_install']
+  bower_path = "#{site['base_path']}/#{site['bower_subpath']}" if site['bower_install']
+  gulp_path = "#{site['base_path']}/#{site['gulp_subpath']}" if site['gulp_run']
 
   # Create ssl cert files
   if site['ssl']
@@ -163,6 +171,7 @@ node['nginx']['sites'].each do |site|
     notifies :run, "execute[Composer install #{site['name']} after git sync]"
     notifies :run, "execute[Artisan migrate #{site['name']} after git sync]"
     notifies :compile, "compass_project[Compile sass for #{site['name']} after git sync]", :immediately
+    notifies :run, "execute[Npm install #{site['name']} after git sync]"
     notifies :run, "ruby_block[Set writeable dirs for #{site['name']} after git sync]"
   end
 
@@ -240,6 +249,65 @@ node['nginx']['sites'].each do |site|
     only_if { site['compass_compile'] }
     only_if { ::File.directory?("#{compass_path}") }
   end
+
+
+  # Npm install without git
+  execute "Npm install #{site['name']}" do
+    cwd npm_path
+    command 'npm install'
+    action :run
+    user deploy_usr
+    only_if { site['npm_install'] }
+    only_if { ::File.directory?("#{npm_path}") }
+    not_if { site['git'] }
+    notifies :run, "execute[Bower install #{site['name']}]"
+    notifies :run, "execute[Gulp #{site['name']}]"
+  end
+
+  # Npm install triggered by git
+  execute "Npm install #{site['name']} after git sync" do
+    cwd npm_path
+    command 'npm install --silent'
+    action :nothing
+    user deploy_usr
+    only_if { site['npm_install'] }
+    only_if { ::File.directory?("#{npm_path}") }
+    notifies :run, "execute[Bower install #{site['name']}]"
+    notifies :run, "execute[Gulp #{site['name']}]"
+  end
+
+  # Bower install after npm install
+  execute "Bower install #{site['name']}" do
+    cwd bower_path
+    command 'bower install --silent'
+    action :nothing
+    user deploy_usr
+    only_if { site['bower_install'] }
+    only_if { ::File.directory?("#{bower_path}") }
+    notifies :run, "execute[Gulp #{site['name']}]"
+  end
+
+  # Gulp run after bower install
+  execute "Gulp #{site['name']} after bower" do
+    cwd gulp_path
+    command 'gulp --silent --production'
+    action :nothing
+    user deploy_usr
+    only_if { site['gulp_run'] }
+    only_if { ::File.directory?("#{gulp_path}") }
+  end
+
+  # Gulp run after npm install
+  execute "Gulp #{site['name']}" do
+    cwd gulp_path
+    command 'gulp --silent --production'
+    action :nothing
+    user deploy_usr
+    only_if { site['gulp_run'] }
+    only_if { ::File.directory?("#{gulp_path}") }
+    not_if { site['bower_install'] }
+  end
+
 
   # Set writeable directories without git
   if site['writeable_dirs'].is_a?(Array) && !site['git']

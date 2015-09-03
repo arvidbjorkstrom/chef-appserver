@@ -29,6 +29,7 @@ recipes should run on these platforms without error:
 * [nginx](https://github.com/phlipper/chef-nginx) Cookbook by Phil Cohen
 * [compass](https://github.com/arvidbjorkstrom/chef-compass) Cookbook by Arvid Björkström
 * [swap](http://community.opscode.com/cookbooks/swap) Cookbook by Seth Vargo
+* [nodejs](http://community.opscode.com/cookbooks/nodejs) Cookbook by Marius Ducea
 
 ### Chef
 
@@ -104,6 +105,12 @@ default['nginx']['sites'] = [
     'artisan_subpath' => 'artisan',
     'composer_install' => true,
     'composer_subpath' => '',
+    'npm_install' => true,
+    'npm_subpath' => '',
+    'bower_install' => true,
+    'bower_subpath' => '',
+    'gulp_run' => true,
+    'gulp_subpath' => '',
     'git' => true,
     'git_subpath' => '',
     'git_repo' => 'git@bitbucket.org:gituser/domain.se.git',
