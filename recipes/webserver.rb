@@ -178,7 +178,7 @@ node['nginx']['sites'].each do |site|
 
   # Composer install triggered by git sync
   execute "Composer install #{site['name']} after git sync" do
-    command "composer install -n -d #{composer_path}"
+    command "composer install -n -q -d #{composer_path}"
     action :nothing
     user deploy_usr
     only_if { site['composer_install'] }
@@ -188,7 +188,7 @@ node['nginx']['sites'].each do |site|
 
   # Composer install without git
   execute "Composer install #{site['name']}" do
-    command "composer install -n -d #{composer_path}"
+    command "composer install -n -q -d #{composer_path}"
     action :run
     user deploy_usr
     only_if { site['composer_install'] }
