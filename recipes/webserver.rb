@@ -357,6 +357,23 @@ node['nginx']['sites'].each do |site|
     only_if site['artisan_queuelisten']
   end
 
+  # Set up artisan cron entries
+  site['artisan_cron'].each do |cronjob|
+    cronjob['minute'] ||= '*'
+    cronjob['hour'] ||= '*'
+    cronjob['month'] ||= '*'
+    cronjob['weekday'] ||= '*'
+
+    cron cronjob['name'] do
+      minute cronjob['minute']
+      hour cronjob['hour']
+      month cronjob['month']
+      weekday cronjob['weekday']
+      command "php #{artisan_path} --env=#{site['environment']} #{cronjob['command']}"
+      user deploy_usr
+    end
+  end
+
   # Set up cron entries
   site['cronjobs'].each do |cronjob|
     cronjob['minute'] ||= '*'
