@@ -65,3 +65,7 @@ node['mysql']['databases'].each do |db|
     end
   end
 end
+
+# Redis
+include_recipe 'redisio'
+include_recipe 'redisio::enable'

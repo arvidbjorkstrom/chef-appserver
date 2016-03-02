@@ -26,3 +26,4 @@ depends 'nginx' # https://github.com/phlipper/chef-nginx
 depends 'compass' # https://github.com/phlipper/chef-nginx
 depends 'swap', '~> 0.3.8'
 depends 'nodejs', '~> 2.4.0'
+depends 'redisio', '~> 2.3.0'
