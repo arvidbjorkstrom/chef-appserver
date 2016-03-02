@@ -343,4 +343,18 @@ node['nginx']['sites'].each do |site|
     action :nothing
     only_if { site['writeable_dirs'].is_a?(Array) }
   end
+
+
+  # Set up supervisor
+  if site['artisan_queuelisten']
+    supervisor_service "ArtisanQueueListen_#{site['name']}" do
+      command "php #{artisan_path} --env=#{site['environment']} queue:work --tries=3 --daemon"
+      autostart true
+      autorestart true
+      user deploy_usr
+      numprocs site['artisan_queueworkers']
+      redirect_stderr true
+      stdout_logfile "#{site['base_path']}/app/storage/logs/worker.log"
+    end
+  end
 end
