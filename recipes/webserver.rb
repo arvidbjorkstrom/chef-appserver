@@ -346,16 +346,15 @@ node['nginx']['sites'].each do |site|
 
 
   # Set up supervisor
-  if site['artisan_queuelisten']
-    supervisor_service "ArtisanQueueListen_#{site['name']}" do
-      command "php #{artisan_path} --env=#{site['environment']} queue:work --tries=3 --daemon"
-      autostart true
-      autorestart true
-      user deploy_usr
-      numprocs site['artisan_queueworkers']
-      redirect_stderr true
-      stdout_logfile "#{site['base_path']}/app/storage/logs/worker.log"
-    end
+  supervisor_service "ArtisanQueueListen_#{site['name']}" do
+    command "php #{artisan_path} --env=#{site['environment']} queue:work --tries=3 --daemon"
+    autostart true
+    autorestart true
+    user deploy_usr
+    numprocs site['artisan_queueworkers']
+    redirect_stderr true
+    stdout_logfile "#{site['base_path']}/app/storage/logs/worker.log"
+    only_if site['artisan_queuelisten']
   end
 
   # Set up cron entries
