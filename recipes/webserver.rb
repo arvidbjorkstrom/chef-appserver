@@ -138,7 +138,7 @@ node['nginx']['sites'].each do |site|
     'ssl_crt' => "#{node['nginx']['dir']}/ssl/#{site['name']}.crt",
     'ssl_key' => "#{node['nginx']['dir']}/ssl/#{site['name']}.key"
   }
-  nginx_site site['name'] do
+  nginx_site site['name'] do # ~FC022
     listen '*:80'
     host site['host']
     root webroot_path
@@ -182,7 +182,7 @@ node['nginx']['sites'].each do |site|
     action :nothing
     user deploy_usr
     only_if { site['composer_install'] }
-    only_if { ::File.directory?("#{composer_path}") }
+    only_if { ::File.directory?(composer_path) }
     notifies :run, "execute[Artisan migrate #{site['name']} after composer]"
   end
 
@@ -192,7 +192,7 @@ node['nginx']['sites'].each do |site|
     action :run
     user deploy_usr
     only_if { site['composer_install'] }
-    only_if { ::File.directory?("#{composer_path}") }
+    only_if { ::File.directory?(composer_path) }
     only_if { ::File.exist?("#{node['nginx']['dir']}/sites-enabled/#{site['name']}") }
     not_if { site['git'] }
     notifies :run, "execute[Artisan migrate #{site['name']} after composer]"
@@ -205,7 +205,7 @@ node['nginx']['sites'].each do |site|
     action :nothing
     user deploy_usr
     only_if { site['artisan_migrate'] }
-    only_if { ::File.directory?("#{artisan_path}") }
+    only_if { ::File.directory?(artisan_path) }
   end
 
   # Artisan migrate after git, when not running composer install
@@ -214,7 +214,7 @@ node['nginx']['sites'].each do |site|
     action :nothing
     user deploy_usr
     only_if { site['artisan_migrate'] }
-    only_if { ::File.directory?("#{artisan_path}") }
+    only_if { ::File.directory?(artisan_path) }
     not_if { site['composer_install'] }
   end
 
@@ -224,7 +224,7 @@ node['nginx']['sites'].each do |site|
     action :run
     user deploy_usr
     only_if { site['artisan_migrate'] }
-    only_if { ::File.directory?("#{artisan_path}") }
+    only_if { ::File.directory?(artisan_path) }
     only_if { ::File.exist?("#{node['nginx']['dir']}/sites-enabled/#{site['name']}") }
     not_if { site['composer_install'] }
     not_if { site['git'] }
@@ -237,7 +237,7 @@ node['nginx']['sites'].each do |site|
     action :compile
     user deploy_usr
     only_if { site['compass_compile'] }
-    only_if { ::File.directory?("#{compass_path}") }
+    only_if { ::File.directory?(compass_path) }
     not_if { site['git'] }
   end
 
@@ -247,7 +247,7 @@ node['nginx']['sites'].each do |site|
     action :nothing
     user deploy_usr
     only_if { site['compass_compile'] }
-    only_if { ::File.directory?("#{compass_path}") }
+    only_if { ::File.directory?(compass_path) }
   end
 
 
@@ -258,7 +258,7 @@ node['nginx']['sites'].each do |site|
     action :run
     user deploy_usr
     only_if { site['npm_install'] }
-    only_if { ::File.directory?("#{npm_path}") }
+    only_if { ::File.directory?(npm_path) }
     not_if { site['git'] }
     notifies :run, "execute[Bower install #{site['name']}]"
     notifies :run, "execute[Gulp #{site['name']}]"
@@ -271,7 +271,7 @@ node['nginx']['sites'].each do |site|
     action :nothing
     user deploy_usr
     only_if { site['npm_install'] }
-    only_if { ::File.directory?("#{npm_path}") }
+    only_if { ::File.directory?(npm_path) }
     notifies :run, "execute[Bower install #{site['name']}]"
     notifies :run, "execute[Gulp #{site['name']}]"
   end
@@ -283,7 +283,7 @@ node['nginx']['sites'].each do |site|
     action :nothing
     user deploy_usr
     only_if { site['bower_install'] }
-    only_if { ::File.directory?("#{bower_path}") }
+    only_if { ::File.directory?(bower_path) }
     notifies :run, "execute[Gulp #{site['name']}]"
   end
 
@@ -294,7 +294,7 @@ node['nginx']['sites'].each do |site|
     action :nothing
     user deploy_usr
     only_if { site['gulp_run'] }
-    only_if { ::File.directory?("#{gulp_path}") }
+    only_if { ::File.directory?(gulp_path) }
   end
 
   # Gulp run after npm install
@@ -304,7 +304,7 @@ node['nginx']['sites'].each do |site|
     action :nothing
     user deploy_usr
     only_if { site['gulp_run'] }
-    only_if { ::File.directory?("#{gulp_path}") }
+    only_if { ::File.directory?(gulp_path) }
     not_if { site['bower_install'] }
   end
 
