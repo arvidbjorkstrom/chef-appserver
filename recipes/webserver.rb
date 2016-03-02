@@ -357,4 +357,21 @@ node['nginx']['sites'].each do |site|
       stdout_logfile "#{site['base_path']}/app/storage/logs/worker.log"
     end
   end
+
+  # Set up cron entries
+  site['cronjobs'].each do |cronjob|
+    cronjob['minute'] ||= '*'
+    cronjob['hour'] ||= '*'
+    cronjob['month'] ||= '*'
+    cronjob['weekday'] ||= '*'
+
+    cron cronjob['name'] do
+      minute cronjob['minute']
+      hour cronjob['hour']
+      month cronjob['month']
+      weekday cronjob['weekday']
+      command cronjob['command']
+      user deploy_usr
+    end
+  end
 end
