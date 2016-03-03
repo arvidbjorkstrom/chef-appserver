@@ -79,6 +79,8 @@ execute 'Install Composer' do # ~FC041
   action :run
 end
 
+# Install supervisor
+include_recipe 'supervisor'
 
 # NGINX install
 include_recipe 'nginx::server'
@@ -345,7 +347,7 @@ node['nginx']['sites'].each do |site|
   end
 
 
-  # Set up supervisor
+  # Set up supervisors
   supervisor_service "ArtisanQueueListen_#{site['name']}" do
     command "php #{artisan_path} --env=#{site['environment']} queue:work --tries=3 --daemon"
     autostart true
