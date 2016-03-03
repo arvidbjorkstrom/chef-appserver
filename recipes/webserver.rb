@@ -348,13 +348,13 @@ node['nginx']['sites'].each do |site|
 
 
   # Set up supervisors
-  supervisor_service "#{site['name']}_artisanQueue" do
+  supervisor_service "#{site['name']}ArtisanQueue" do
     command "php #{artisan_path} --env=#{site['environment']} queue:work --tries=3 --daemon"
     autostart true
     autorestart true
     user deploy_usr
     numprocs site['artisan_queueworkers']
-    process_name '%(program_name)_%(process_num)'
+    process_name '%(program_name)s_%(process_num)02d'
     redirect_stderr true
     stdout_logfile "#{site['base_path']}/app/storage/logs/worker.log"
     only_if { site['artisan_queuelisten'] }
