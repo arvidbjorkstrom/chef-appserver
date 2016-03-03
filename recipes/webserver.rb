@@ -354,7 +354,7 @@ node['nginx']['sites'].each do |site|
     numprocs site['artisan_queueworkers']
     redirect_stderr true
     stdout_logfile "#{site['base_path']}/app/storage/logs/worker.log"
-    only_if site['artisan_queuelisten']
+    only_if { site['artisan_queuelisten'] }
   end
 
   # Set up artisan cron entries
