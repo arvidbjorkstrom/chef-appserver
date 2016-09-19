@@ -102,6 +102,7 @@ node['nginx']['sites'].each do |site|
   npm_path = "#{site['base_path']}/#{site['npm_subpath']}" if site['npm_install']
   bower_path = "#{site['base_path']}/#{site['bower_subpath']}" if site['bower_install']
   gulp_path = "#{site['base_path']}/#{site['gulp_subpath']}" if site['gulp_run']
+  workerlog_path = "#{site['base_path']}/#{site['artisan_queuelogpath']}" if site['artisan_queuelisten']
 
   # Create ssl cert files
   if site['ssl']
@@ -356,7 +357,7 @@ node['nginx']['sites'].each do |site|
     numprocs site['artisan_queueworkers']
     process_name '%(program_name)s_%(process_num)02d'
     redirect_stderr true
-    stdout_logfile "#{site['base_path']}/app/storage/logs/worker.log"
+    stdout_logfile "#{workerlog_path}"
     only_if { site['artisan_queuelisten'] }
   end
 
