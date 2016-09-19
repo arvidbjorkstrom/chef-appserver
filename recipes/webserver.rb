@@ -97,7 +97,7 @@ node['nginx']['sites'].each do |site|
   webroot_path = "#{site['base_path']}/#{site['webroot_subpath']}"
   git_path = "#{site['base_path']}/#{site['git_subpath']}" if site['git']
   composer_path = "#{site['base_path']}/#{site['composer_subpath']}" if site['composer_install']
-  artisan_path = "#{site['base_path']}/#{site['artisan_subpath']}" if site['artisan_migrate']
+  artisan_path = "#{site['base_path']}/#{site['artisan_subpath']}"
   compass_path = "#{site['base_path']}/#{site['compass_subpath']}" if site['compass_compile']
   npm_path = "#{site['base_path']}/#{site['npm_subpath']}" if site['npm_install']
   bower_path = "#{site['base_path']}/#{site['bower_subpath']}" if site['bower_install']
