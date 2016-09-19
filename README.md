@@ -71,64 +71,16 @@ default['tz'] = 'Europe/Stockholm'
 default['mysql']['server_root_username'] = 'root'
 default['mysql']['server_root_password'] = 'YouShouldReplaceThis'
 default['mysql']['server_debian_password'] = 'YouShouldReplaceThis'
-
-default['mysql']['databases'] = [
-  {
-    'database' => 'dbname',
-    'username' => 'dbuser',
-    'password' => 'dbpass',
-    'overwrite' => true
-  }
-]
+default['mysql']['databases'] = []
 
 
-# NGINX config and Site install & deploy
-default['nginx']['sites'] = [
-  {
-    'name' => 'domain.se',
-    'base_path' => '/var/www/domain.se',
-    'host' => 'www.domain.se',
-    'webroot_subpath' => 'public',
-    'index' => 'index.php index.html index.htm',
-    'location' => 'try_files $uri $uri/ /index.php?$query_string',
-    'phpfpm' => true,
-    'template_source' => 'serverblock.conf.erb',
-    'template_cookbook' => 'appserver',
-    'environment' => 'prod',
-    'db_host' => 'localhost',
-    'db_database' => 'dbname',
-    'db_username' => 'dbuser',
-    'db_password' => 'dbpass',
-    'compass_compile' => true,
-    'compass_subpath' => '',
-    'artisan_migrate' => false,
-    'artisan_subpath' => 'artisan',
-    'composer_install' => true,
-    'composer_subpath' => '',
-    'npm_install' => true,
-    'npm_subpath' => '',
-    'bower_install' => true,
-    'bower_subpath' => '',
-    'gulp_run' => true,
-    'gulp_subpath' => '',
-    'git' => true,
-    'git_subpath' => '',
-    'git_repo' => 'git@bitbucket.org:gituser/domain.se.git',
-    'git_branch' => 'master',
-    'ssl' => true,
-    'ssl_key' => '-----BEGIN RSA PRIVATE KEY-----
-...
------END RSA PRIVATE KEY-----
-',
-    'ssl_crt' => '-----BEGIN CERTIFICATE-----
-...
------END CERTIFICATE-----
-',
-    'writeable_dirs' => []
-  }
-]
+# NGINX
+default['nginx']['sites'] = []
 
 # PHP
+# Default Value: E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED
+# Development Value: E_ALL
+# Production Value: E_ALL & ~E_DEPRECATED & ~E_STRICT
 default['php']['error_reporting'] = 'E_ALL'
 default['php']['display_errors'] = 'Off'
 default['php']['log_errors'] = 'On'
@@ -146,6 +98,12 @@ default['opcache']['revalidate_freq'] = '60'
 default['opcache']['fast_shutdown'] = '1'
 default['opcache']['enable_cli'] = '1'
 default['opcache']['consistency_checks'] = '0'
+
+# Node
+default['nodejs']['install_method'] = 'source'
+# default["nodejs"]["version"] = "4.2.4"
+# default['nodejs']['source']['checksum'] = "4ee244ffede7328d9fa24c3024787e71225b7abaac49fe2b30e68b27460c10ec"
+# default["nodejs"]["npm"]["install_method"] = "source"
 ```
 
 ## TODO
