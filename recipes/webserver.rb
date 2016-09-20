@@ -176,6 +176,30 @@ node['nginx']['sites'].each do |site|
     notifies :compile, "compass_project[Compile sass for #{site['name']} after git sync]", :immediately
     notifies :run, "execute[Npm install #{site['name']} after git sync]"
     notifies :run, "ruby_block[Set writeable dirs for #{site['name']} after git sync]"
+    notifies :create, "Create #{site['base_path']}/.env after git sync"
+  end
+
+
+  # Create .env file efter git sync
+  template "Create #{site['base_path']}/.env after git sync" do
+    path "#{site['base_path']}/.env"
+    source 'env.erb'
+    owner deploy_usr
+    group 'www-data'
+    mode '0755'
+    action :nothing
+    only_if { site['env'] }
+  end
+
+  # Create .env file without git sync
+  template "Create #{site['base_path']}/.env" do
+    path "#{site['base_path']}/.env"
+    source 'env.erb'
+    owner deploy_usr
+    group 'www-data'
+    mode '0755'
+    not_if { site['git'] }
+    only_if { site['env'] }
   end
 
 
