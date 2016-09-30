@@ -176,7 +176,7 @@ node['nginx']['sites'].each do |site|
     notifies :compile, "compass_project[Compile sass for #{site['name']} after git sync]", :immediately
     notifies :run, "execute[Npm install #{site['name']} after git sync]"
     notifies :run, "ruby_block[Set writeable dirs for #{site['name']} after git sync]"
-    notifies :create, "Create #{site['base_path']}/.env after git sync"
+    notifies :create, "template[Create #{site['base_path']}/.env after git sync]"
   end
 
 
