@@ -19,6 +19,8 @@ default['mysql']['server_root_password'] = 'YouShouldReplaceThis'
 default['mysql']['server_debian_password'] = 'YouShouldReplaceThis'
 default['mysql']['databases'] = []
 
+default['automysqlbackup']['mysql_dump_password'] = node['mysql']['server_root_password']
+
 # NGINX
 default['nginx']['sites'] = []
 

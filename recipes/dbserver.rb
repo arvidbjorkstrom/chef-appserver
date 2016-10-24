@@ -66,6 +66,9 @@ node['mysql']['databases'].each do |db|
   end
 end
 
+# Auto MySQL Backup
+package 'automysqlbackup'
+
 # Redis
 include_recipe 'redisio'
 include_recipe 'redisio::enable'
