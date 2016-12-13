@@ -306,13 +306,13 @@ node['nginx']['sites'].each do |site|
   # Bower install after npm install
   execute "Bower install #{site['name']}" do
     cwd bower_path
-    command 'bower install --silent'
+    command "su #{deploy_usr} -l -c 'bower install --silent'"
     action :nothing
-    user deploy_usr
     only_if { site['bower_install'] }
     only_if { ::File.directory?(bower_path) }
     notifies :run, "execute[Gulp #{site['name']}]"
   end
+
 
   # Gulp run after bower install
   execute "Gulp #{site['name']} after bower" do
