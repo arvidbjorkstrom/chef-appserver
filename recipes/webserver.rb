@@ -381,7 +381,7 @@ node['nginx']['sites'].each do |site|
     numprocs site['artisan_queueworkers']
     process_name '%(program_name)s_%(process_num)02d'
     redirect_stderr true
-    stdout_logfile "#{workerlog_path}"
+    stdout_logfile workerlog_path
     only_if { site['artisan_queuelisten'] }
   end
 
