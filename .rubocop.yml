@@ -11,6 +11,6 @@ HashSyntax:
 EmptyLines:
   Enabled: false
 
-SingleSpaceBeforeFirstArg:
+SpaceBeforeFirstArg:
   Exclude:
   - metadata.rb
