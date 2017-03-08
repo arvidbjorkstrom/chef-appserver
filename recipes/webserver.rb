@@ -139,7 +139,9 @@ node['nginx']['sites'].each do |site|
     'db_password' => site['db_password'],
     'ssl' => site['ssl'],
     'ssl_crt' => "#{node['nginx']['dir']}/ssl/#{site['name']}.crt",
-    'ssl_key' => "#{node['nginx']['dir']}/ssl/#{site['name']}.key"
+    'ssl_key' => "#{node['nginx']['dir']}/ssl/#{site['name']}.key",
+    'redirect-hosts' => site['redirect-hosts'],
+    'redirect-to' => site['redirect-to']
   }
   nginx_site site['name'] do # ~FC022
     listen '*:80'

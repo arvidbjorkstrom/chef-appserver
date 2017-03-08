@@ -1,3 +1,22 @@
+<% if @custom_data && @custom_data['redirect-hosts'] -%>
+server {
+  listen <%= @listen %>;
+  server_name <%= @custom_data['redirect-hosts'] %>;
+  return 301 http://<%= @custom_data['redirect-to'] %>$request_uri;
+}
+<% if @custom_data && @custom_data['ssl'] -%>
+server {
+  listen 443 ssl;
+  keepalive_timeout 70;
+  ssl_certificate     <%= @custom_data['ssl_crt'] %>;
+  ssl_certificate_key <%= @custom_data['ssl_key'] %>;
+  ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers         HIGH:!aNULL:!MD5;
+  server_name <%= @custom_data['redirect-hosts'] %>;
+  return 301 https://<%= @custom_data['redirect-to'] %>$request_uri;
+}
+<% end -%>
+<% end -%>
 server {
   listen <%= @listen %>;
   <% if @custom_data && @custom_data['ssl'] -%>
