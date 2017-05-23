@@ -13,6 +13,7 @@ recipe 'appserver::webserver', 'Internal recipe to setup php-fpm and nginx.'
 
 depends 'timezone-ii'
 depends 'apt', '~>2.6.1'
+depends 'ark', '~>2.0.0'
 depends 'zsh', '~>1.0.1'
 depends 'git', '~>4.1.0'
 depends 'chef-solo-search', '~>0.5.1'
