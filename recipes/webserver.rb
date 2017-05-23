@@ -25,21 +25,26 @@ include_recipe 'nodejs'
 nodejs_npm 'bower'
 nodejs_npm 'gulp'
 
+# sudo add-apt-repository ppa:ondrej/php; sudo apt-get update
+apt_repository 'ondrej/php' do
+  uri 'ppa:ondrej/php'
+end
+
 # PHP FPM
-package 'php5-fpm' do
+package 'php5.6-fpm' do
   action :install
 end
 
 service 'php-fpm' do
   provider ::Chef::Provider::Service::Upstart
-  service_name 'php5-fpm'
+  service_name 'php5.6-fpm'
   supports enable: true, start: true, stop: true, restart: true
   # :reload doesnt work on ubuntu 14.04 because of a bug...
   action [:enable, :start]
 end
 
 # PHP with plugins
-%w(php5 php5-cli php5-mysql php5-curl php5-mcrypt php5-gd imagemagick php5-imagick).each do |pkg|
+%w(php5.6 php5.6-cli php5.6-mysql php5.6-curl php5.6-mcrypt php5.6-gd imagemagick php5.6-imagick).each do |pkg|
   package pkg do
     action :install
   end
