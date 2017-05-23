@@ -26,7 +26,7 @@ nodejs_npm 'bower'
 nodejs_npm 'gulp'
 
 # sudo add-apt-repository ppa:ondrej/php; sudo apt-get update
-apt_repository 'ondrej/php' do
+apt_repository 'ondrej-php' do
   uri 'ppa:ondrej/php'
 end
 
