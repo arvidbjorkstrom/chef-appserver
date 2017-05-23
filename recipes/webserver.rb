@@ -50,7 +50,7 @@ end
   end
 end
 
-template '/etc/php5/fpm/php.ini' do
+template '/etc/php/5.6/fpm/php.ini' do
   source 'php.ini.erb'
   owner 'root'
   group 'root'
@@ -58,7 +58,7 @@ template '/etc/php5/fpm/php.ini' do
   notifies :restart, 'service[php-fpm]'
 end
 
-template '/etc/php5/mods-available/opcache.ini' do
+template '/etc/php5.6/mods-available/opcache.ini' do
   source 'opcache.ini.erb'
   owner 'root'
   group 'root'
@@ -67,7 +67,7 @@ template '/etc/php5/mods-available/opcache.ini' do
 end
 
 execute 'Enable Mcrypt' do
-  command 'php5enmod mcrypt'
+  command 'phpenmod mcrypt'
   action :run
   notifies :restart, 'service[php-fpm]'
 end
