@@ -58,7 +58,7 @@ template '/etc/php/5.6/fpm/php.ini' do
   notifies :restart, 'service[php-fpm]'
 end
 
-template '/etc/php5.6/mods-available/opcache.ini' do
+template '/etc/php/5.6/mods-available/opcache.ini' do
   source 'opcache.ini.erb'
   owner 'root'
   group 'root'
