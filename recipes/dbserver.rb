@@ -70,5 +70,7 @@ end
 package 'automysqlbackup'
 
 # Redis
-include_recipe 'redisio'
-include_recipe 'redisio::enable'
+if node['redisio']['install']
+  include_recipe 'redisio'
+  include_recipe 'redisio::enable'
+end

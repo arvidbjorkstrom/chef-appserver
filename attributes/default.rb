@@ -51,3 +51,6 @@ default['nodejs']['install_method'] = 'source'
 # default["nodejs"]["version"] = "4.2.4"
 # default['nodejs']['source']['checksum'] = "4ee244ffede7328d9fa24c3024787e71225b7abaac49fe2b30e68b27460c10ec"
 # default["nodejs"]["npm"]["install_method"] = "source"
+
+# Redis
+default['redisio']['install'] = false
