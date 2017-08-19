@@ -30,6 +30,13 @@ apt_repository 'ondrej-php' do
   uri 'ppa:ondrej/php'
 end
 
+# PHP with plugins
+%w(php5.6 php5.6-cli php5.6-mysql php5.6-curl php5.6-mcrypt php5.6-gd imagemagick php5.6-imagick).each do |pkg|
+  package pkg do
+    action :install
+  end
+end
+
 # PHP FPM
 package 'php5.6-fpm' do
   action :install
@@ -41,13 +48,6 @@ service 'php-fpm' do
   supports enable: true, start: true, stop: true, restart: true
   # :reload doesnt work on ubuntu 14.04 because of a bug...
   action [:enable, :start]
-end
-
-# PHP with plugins
-%w(php5.6 php5.6-cli php5.6-mysql php5.6-curl php5.6-mcrypt php5.6-gd imagemagick php5.6-imagick).each do |pkg|
-  package pkg do
-    action :install
-  end
 end
 
 template '/etc/php/5.6/fpm/php.ini' do
