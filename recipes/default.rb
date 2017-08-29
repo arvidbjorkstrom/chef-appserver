@@ -3,6 +3,13 @@
 # Recipe:: default
 #
 
+apt_repository 'brightbox-ruby-ng' do
+  uri 'ppa:brightbox/ruby-ng'
+end
+package 'ruby2.3'
+package 'ruby2.3-dev'
+package 'make'
+
 include_recipe 'timezone-ii'
 include_recipe 'apt'
 include_recipe 'zsh'
