@@ -3,10 +3,18 @@
 # Recipe:: dbserver
 #
 
-include_recipe 'mysql::client'
-include_recipe 'mysql::server'
-
-include_recipe 'database::mysql'
+mysql_client 'default' do
+  action :create
+end
+mysql_service 'default' do
+  port '3306'
+  version '5.7'
+  initial_root_password node['mysql']['server_root_password']
+  action [:create, :start]
+end
+mysql2_chef_gem 'default' do
+  action :install
+end
 
 mysql_connection = {
   host:     'localhost',
