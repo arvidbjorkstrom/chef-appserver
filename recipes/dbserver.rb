@@ -16,27 +16,28 @@ mysql2_chef_gem 'default' do
   action :install
 end
 
-mysql_connection = {
-  host:     'localhost',
-  username: node['mysql']['server_root_username'],
-  password: node['mysql']['server_root_password']
-}
+mysql_command = "mysql -h'localhost' -u'#{node['mysql']['server_root_username']}' -p'#{node['mysql']['server_root_password']}'" # rubocop:disable LineLength
 
 package 'unzip'
 
 node['mysql']['databases'].each do |db|
   if db['overwrite']
-    mysql_database db['database'] do
-      connection mysql_connection
-      action [:drop, :create]
+
+    execute "Drop database #{db['database']}" do
+      command "#{mysql_command} -e \"DROP DATABASE '#{db['database']}'\""
+      action :run
+      notifies :run, "execute[Create database #{db['database']}]"
     end
 
-    mysql_database_user db['username'] do
-      connection mysql_connection
-      host 'localhost'
-      password db['password']
-      database_name db['database']
-      action [:create, :grant]
+    execute "Create database #{db['database']}" do
+      command "#{mysql_command} -e \"CREATE DATABASE '#{db['database']}'\""
+      action :nothing
+      notifies :run, "execute[Setup user #{db['username']} with access to #{db['database']}]"
+    end
+
+    execute "Setup user #{db['username']} with access to #{db['database']}" do
+      command "#{mysql_command} -e \"GRANT ALL PRIVILEGES ON #{db['database']} . * TO '#{db['username']}'@'localhost' IDENTIFIED BY '#{db['password']}'\"" # rubocop:disable LineLength
+      action :nothing
     end
 
     execute "Unzip #{db['database']}.sql.zip" do
@@ -54,23 +55,23 @@ node['mysql']['databases'].each do |db|
       notifies :run, "execute[Import to #{db['database']}]", :immediately
     end
     execute "Import to #{db['database']}" do
-      command "mysql -u #{node['mysql']['server_root_username']} -p\"#{node['mysql']['server_root_password']}\" #{db['database']} < /tmp/#{db['database']}.sql" # rubocop:disable LineLength
+      command "#{mysql_command} #{db['database']} < /tmp/#{db['database']}.sql"
       action :nothing
       only_if { ::File.exist?("/tmp/#{db['database']}.sql") }
     end
   else
-    mysql_database db['database'] do
-      connection mysql_connection
-      action :create
+
+    execute "Create database #{db['database']}" do
+      command "#{mysql_command} -e \"CREATE DATABASE IF NOT EXISTS '#{db['database']}'\""
+      action :run
+      notifies :run, "execute[Setup user #{db['username']} with access to #{db['database']}]"
     end
 
-    mysql_database_user db['username'] do
-      connection mysql_connection
-      host 'localhost'
-      password db['password']
-      database_name db['database']
-      action [:create, :grant]
+    execute "Setup user #{db['username']} with access to #{db['database']}" do
+      command "#{mysql_command} -e \"GRANT ALL PRIVILEGES ON #{db['database']} . * TO '#{db['username']}'@'localhost' IDENTIFIED BY '#{db['password']}'\"" # rubocop:disable LineLength
+      action :nothing
     end
+
   end
 end
 
