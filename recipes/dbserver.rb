@@ -12,9 +12,6 @@ mysql_service 'default' do
   initial_root_password node['mysql']['server_root_password']
   action [:create, :start]
 end
-mysql2_chef_gem 'default' do
-  action :install
-end
 
 mysql_command = "mysql -h'localhost' -u'#{node['mysql']['server_root_username']}' -p'#{node['mysql']['server_root_password']}'" # rubocop:disable LineLength
 

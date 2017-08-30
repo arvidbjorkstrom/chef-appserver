@@ -21,7 +21,6 @@ depends 'users', '~>1.7.0'
 depends 'sudo', '~>2.7.1'
 depends 'oh-my-zsh', '~>0.4.3'
 depends 'mysql', '~> 8.0'
-depends 'mysql2_chef_gem', '~> 1.1.0'
 depends 'automysqlbackup', '~> 2.0.1'
 depends 'nginx' # https://github.com/phlipper/chef-nginx
 depends 'compass' # https://github.com/phlipper/chef-nginx
