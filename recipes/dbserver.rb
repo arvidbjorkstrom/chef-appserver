@@ -13,8 +13,14 @@ package 'unzip'
 node['mysql']['databases'].each do |db|
   if db['overwrite']
 
+    execute "Drop database #{db['database']}" do
+      command "#{mysql_command} -e \"DROP DATABASE '#{db['database']}'\""
+      action :run
+      notifies :run, "execute[Create database #{db['database']}]"
+    end
+
     execute "Create database #{db['database']}" do
-      command "#{mysql_command} -e \"CREATE DATABASE IF NOT EXISTS '#{db['database']}'\""
+      command "#{mysql_command} -e \"CREATE DATABASE '#{db['database']}'\""
       action :nothing
       notifies :run, "execute[Setup user #{db['username']} with access to #{db['database']}]"
     end
