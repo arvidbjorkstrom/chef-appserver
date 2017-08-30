@@ -15,19 +15,19 @@ node['mysql']['databases'].each do |db|
     execute "Create user #{db['username']}" do
       command "#{mysql_command} -e \"CREATE USER IF NOT EXISTS '#{db['username']}'@'localhost'\""
       action :run
-      notifies :run, "Set password for user #{db['username']}"
+      notifies :run, "execute[Set password for user #{db['username']}]"
     end
 
     execute "Set password for user #{db['username']}" do
       command "#{mysql_command} -e \"SET PASSWORD FOR '#{db['username']}'@'localhost' = '#{db['password']}'\"" 
       action :nothing
-      notifies :run, "Create database #{db['database']}"
+      notifies :run, "execute[Create database #{db['database']}]"
     end
 
     execute "Create database #{db['database']}" do
       command "#{mysql_command} -e \"CREATE DATABASE IF NOT EXISTS '#{db['database']}'\""
       action :nothing
-      notifies :run, "Grant #{db['username']} access to #{db['database']}"
+      notifies :run, "execute[Grant #{db['username']} access to #{db['database']}]"
     end
 
     execute "Grant #{db['username']} access to #{db['database']}" do
@@ -59,19 +59,19 @@ node['mysql']['databases'].each do |db|
     execute "Create user #{db['username']}" do
       command "#{mysql_command} -e \"CREATE USER IF NOT EXISTS '#{db['username']}'@'localhost'\""
       action :run
-      notifies :run, "Set password for user #{db['username']}"
+      notifies :run, "execute[Set password for user #{db['username']}]"
     end
 
     execute "Set password for user #{db['username']}" do
       command "#{mysql_command} -e \"SET PASSWORD FOR '#{db['username']}'@'localhost' = '#{db['password']}'\""
       action :nothing
-      notifies :run, "Create database #{db['database']}"
+      notifies :run, "execute[Create database #{db['database']}]"
     end
 
     execute "Create database #{db['database']}" do
       command "#{mysql_command} -e \"CREATE DATABASE IF NOT EXISTS '#{db['database']}'\""
       action :nothing
-      notifies :run, "Grant #{db['username']} access to #{db['database']}"
+      notifies :run, "execute[Grant #{db['username']} access to #{db['database']}]"
     end
 
     execute "Grant #{db['username']} access to #{db['database']}" do
