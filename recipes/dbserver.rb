@@ -12,26 +12,15 @@ package 'unzip'
 
 node['mysql']['databases'].each do |db|
   if db['overwrite']
-    execute "Create user #{db['username']}" do
-      command "#{mysql_command} -e \"CREATE USER IF NOT EXISTS '#{db['username']}'@'localhost'\""
-      action :run
-      notifies :run, "execute[Set password for user #{db['username']}]"
-    end
-
-    execute "Set password for user #{db['username']}" do
-      command "#{mysql_command} -e \"SET PASSWORD FOR '#{db['username']}'@'localhost' = '#{db['password']}'\"" 
-      action :nothing
-      notifies :run, "execute[Create database #{db['database']}]"
-    end
 
     execute "Create database #{db['database']}" do
       command "#{mysql_command} -e \"CREATE DATABASE IF NOT EXISTS '#{db['database']}'\""
       action :nothing
-      notifies :run, "execute[Grant #{db['username']} access to #{db['database']}]"
+      notifies :run, "execute[Setup user #{db['username']} with access to #{db['database']}]"
     end
 
-    execute "Grant #{db['username']} access to #{db['database']}" do
-      command "#{mysql_command} -e \"GRANT ALL PRIVILEGES ON '#{db['database']}' . * TO '#{db['username']}'@'localhost'\"" # rubocop:disable LineLength
+    execute "Setup user #{db['username']} with access to #{db['database']}" do
+      command "#{mysql_command} -e \"GRANT ALL PRIVILEGES ON #{db['database']} . * TO '#{db['username']}'@'localhost' IDENTIFIED BY '#{db['password']}'\"" # rubocop:disable LineLength
       action :nothing
     end
 
@@ -56,28 +45,17 @@ node['mysql']['databases'].each do |db|
     end
   else
 
-    execute "Create user #{db['username']}" do
-      command "#{mysql_command} -e \"CREATE USER IF NOT EXISTS '#{db['username']}'@'localhost'\""
-      action :run
-      notifies :run, "execute[Set password for user #{db['username']}]"
-    end
-
-    execute "Set password for user #{db['username']}" do
-      command "#{mysql_command} -e \"SET PASSWORD FOR '#{db['username']}'@'localhost' = '#{db['password']}'\""
-      action :nothing
-      notifies :run, "execute[Create database #{db['database']}]"
-    end
-
     execute "Create database #{db['database']}" do
       command "#{mysql_command} -e \"CREATE DATABASE IF NOT EXISTS '#{db['database']}'\""
-      action :nothing
-      notifies :run, "execute[Grant #{db['username']} access to #{db['database']}]"
+      action :run
+      notifies :run, "execute[Setup user #{db['username']} with access to #{db['database']}]"
     end
 
-    execute "Grant #{db['username']} access to #{db['database']}" do
-      command "#{mysql_command} -e \"GRANT ALL PRIVILEGES ON '#{db['database']}' . * TO '#{db['username']}'@'localhost'\"" # rubocop:disable LineLength
+    execute "Setup user #{db['username']} with access to #{db['database']}" do
+      command "#{mysql_command} -e \"GRANT ALL PRIVILEGES ON #{db['database']} . * TO '#{db['username']}'@'localhost' IDENTIFIED BY '#{db['password']}'\"" # rubocop:disable LineLength
       action :nothing
     end
+
   end
 end
 
