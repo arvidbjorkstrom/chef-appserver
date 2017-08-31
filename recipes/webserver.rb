@@ -22,8 +22,9 @@ include_recipe 'compass' if node['compass']['install']
 
 # Node JS & packages
 include_recipe 'nodejs'
-nodejs_npm 'bower'
-nodejs_npm 'gulp'
+node['nodejs']['npm']['packages'].each do |npackage|
+  nodejs_npm npackage
+end
 
 # sudo add-apt-repository ppa:ondrej/php; sudo apt-get update
 apt_repository 'ondrej-php' do
