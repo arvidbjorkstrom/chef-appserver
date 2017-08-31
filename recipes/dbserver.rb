@@ -6,7 +6,7 @@
 include_recipe 'mysql::client'
 include_recipe 'mysql::server'
 
-mysql_command = "mysql -h'localhost' -u'#{node['mysql']['server_root_username']}' -p'#{node['mysql']['server_root_password']}'" # rubocop:disable LineLength
+mysql_command = "mysql -h'127.0.0.1' -u'#{node['mysql']['server_root_username']}' -p'#{node['mysql']['server_root_password']}'" # rubocop:disable LineLength
 
 package 'unzip'
 
