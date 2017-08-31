@@ -47,7 +47,7 @@ default['opcache']['enable_cli'] = '1'
 default['opcache']['consistency_checks'] = '0'
 
 # Compass
-node['compass']['install'] = false
+node['compass']['install'] = true
 
 # Node
 default['nodejs']['npm']['packages'] = %()
