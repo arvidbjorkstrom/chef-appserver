@@ -22,7 +22,7 @@ depends 'oh-my-zsh', '~>0.4.3'
 depends 'mysql', '~>5.4.4'
 depends 'automysqlbackup', '~> 2.0.1'
 depends 'nginx' # https://github.com/phlipper/chef-nginx
-depends 'compass' # https://github.com/phlipper/chef-nginx
+depends 'compass' # https://github.com/arvidbjorkstrom/chef-compass
 depends 'swap', '~> 0.3.8'
 depends 'nodejs', '~> 4.0.0'
 depends 'redisio', '~> 2.3.0'
