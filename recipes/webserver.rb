@@ -31,7 +31,7 @@ apt_repository 'ondrej-php' do
 end
 
 # PHP with plugins
-%w(php5.6 php5.6-cli php5.6-mysql php5.6-curl php5.6-mcrypt php5.6-gd imagemagick php5.6-imagick).each do |pkg|
+%w[php5.6 php5.6-cli php5.6-mysql php5.6-curl php5.6-mcrypt php5.6-gd imagemagick php5.6-imagick].each do |pkg|
   package pkg do
     action :install
   end
@@ -167,7 +167,6 @@ node['nginx']['sites'].each do |site|
     notifies :run, "execute[Artisan migrate #{site['name']}]"
   end
 
-
   # Sync with git repository
   git "Syncing git repository for #{site['name']}" do
     destination git_path
@@ -185,7 +184,6 @@ node['nginx']['sites'].each do |site|
     notifies :run, "ruby_block[Set writeable dirs for #{site['name']} after git sync]"
     notifies :create, "template[Create #{site['base_path']}/.env after git sync]"
   end
-
 
   # Create .env file efter git sync
   template "Create #{site['base_path']}/.env after git sync" do
@@ -209,7 +207,6 @@ node['nginx']['sites'].each do |site|
     only_if { site['env'] }
   end
 
-
   # Composer install triggered by git sync
   execute "Composer install #{site['name']} after git sync" do
     command "composer install -n -q -d #{composer_path}"
@@ -231,7 +228,6 @@ node['nginx']['sites'].each do |site|
     not_if { site['git'] }
     notifies :run, "execute[Artisan migrate #{site['name']} after composer]"
   end
-
 
   # Artisan migrate triggered by composer install
   execute "Artisan migrate #{site['name']} after composer" do
@@ -264,7 +260,6 @@ node['nginx']['sites'].each do |site|
     not_if { site['git'] }
   end
 
-
   # Compass compile without git
   compass_project "Compile sass for #{site['name']}" do
     path compass_path
@@ -283,7 +278,6 @@ node['nginx']['sites'].each do |site|
     only_if { site['compass_compile'] }
     only_if { ::File.directory?(compass_path) }
   end
-
 
   # Npm install without git
   execute "Npm install #{site['name']}" do
@@ -320,7 +314,6 @@ node['nginx']['sites'].each do |site|
     notifies :run, "execute[Gulp #{site['name']}]"
   end
 
-
   # Gulp run after bower install
   execute "Gulp #{site['name']} after bower" do
     cwd gulp_path
@@ -341,7 +334,6 @@ node['nginx']['sites'].each do |site|
     only_if { ::File.directory?(gulp_path) }
     not_if { site['bower_install'] }
   end
-
 
   # Set writeable directories without git
   if site['writeable_dirs'].is_a?(Array) && !site['git']
@@ -377,7 +369,6 @@ node['nginx']['sites'].each do |site|
     action :nothing
     only_if { site['writeable_dirs'].is_a?(Array) }
   end
-
 
   # Set up supervisors
   supervisor_service "#{site['name']}ArtisanQueue" do
