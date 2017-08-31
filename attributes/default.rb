@@ -46,6 +46,9 @@ default['opcache']['fast_shutdown'] = '1'
 default['opcache']['enable_cli'] = '1'
 default['opcache']['consistency_checks'] = '0'
 
+# Compass
+node['compass']['install'] = false
+
 # Node
 default['nodejs']['install_method'] = 'package'
 # default['nodejs']['install_method'] = 'source'

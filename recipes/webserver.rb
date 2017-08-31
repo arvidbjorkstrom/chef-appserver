@@ -18,7 +18,7 @@ unless Chef::Config[:solo] && !chef_solo_search_installed?
 end
 
 # Compass
-include_recipe 'compass'
+include_recipe 'compass' if node['compass']['install']
 
 # Node JS & packages
 include_recipe 'nodejs'
