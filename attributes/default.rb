@@ -19,7 +19,7 @@ default['mysql']['server_root_password'] = 'YouShouldReplaceThis'
 default['mysql']['server_debian_password'] = 'YouShouldReplaceThis'
 default['mysql']['databases'] = []
 
-default['automysqlbackup']['mysql_dump_password'] = node['mysql']['server_root_password']
+default['automysqlbackup']['mysql_dump_password'] = default['mysql']['server_root_password']
 
 # NGINX
 default['nginx']['sites'] = []
@@ -47,7 +47,7 @@ default['opcache']['enable_cli'] = '1'
 default['opcache']['consistency_checks'] = '0'
 
 # Compass
-node['compass']['install'] = true
+default['compass']['install'] = true
 
 # Node
 default['nodejs']['npm']['packages'] = []
