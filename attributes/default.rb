@@ -50,7 +50,7 @@ default['opcache']['consistency_checks'] = '0'
 node['compass']['install'] = false
 
 # Node
-default['nodejs']['npm']['packages'] = %()
+default['nodejs']['npm']['packages'] = []
 
 # Redis
 default['redisio']['install'] = false
