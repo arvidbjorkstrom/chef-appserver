@@ -26,6 +26,9 @@ node['nodejs']['npm']['packages'].each do |npackage|
   nodejs_npm npackage
 end
 
+# NGINX install
+include_recipe 'nginx::server'
+
 # sudo add-apt-repository ppa:ondrej/php; sudo apt-get update
 apt_repository 'ondrej-php' do
   uri 'ppa:ondrej/php'
@@ -94,9 +97,6 @@ end
 
 # Install supervisor
 include_recipe 'supervisor'
-
-# NGINX install
-include_recipe 'nginx::server'
 
 directory '/var/www' do
   owner deploy_usr
