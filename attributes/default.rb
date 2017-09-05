@@ -25,6 +25,7 @@ default['automysqlbackup']['mysql_dump_password'] = default['mysql']['server_roo
 default['nginx']['sites'] = []
 
 # PHP
+default['php']['version'] = '5.6'
 # Default Value: E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED
 # Development Value: E_ALL
 # Production Value: E_ALL & ~E_DEPRECATED & ~E_STRICT

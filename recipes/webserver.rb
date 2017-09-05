@@ -31,27 +31,26 @@ apt_repository 'ondrej-php' do
   uri 'ppa:ondrej/php'
 end
 
-# PHP with plugins
-%w[php5.6 php5.6-cli php5.6-mysql php5.6-curl php5.6-mcrypt php5.6-gd imagemagick php5.6-imagick].each do |pkg|
-  package pkg do
-    action :install
-  end
+# PHP
+package "php#{node['php']['version']}"
+
+package 'imagemagick'
+
+# PHP plugins
+%w[-cli -mysql -curl -mcrypt -gd -imagick -fpm].each do |pkg|
+  package "php#{node['php']['version']}#{pkg}"
 end
 
-# PHP FPM
-package 'php5.6-fpm' do
-  action :install
-end
-
+# PHP FPM service
 service 'php-fpm' do
   provider ::Chef::Provider::Service::Upstart
-  service_name 'php5.6-fpm'
+  service_name "php#{node['php']['version']}-fpm"
   supports enable: true, start: true, stop: true, restart: true
   # :reload doesnt work on ubuntu 14.04 because of a bug...
   action [:enable, :start]
 end
 
-template '/etc/php/5.6/fpm/php.ini' do
+template "/etc/php/#{node['php']['version']}/fpm/php.ini" do
   source 'php.ini.erb'
   owner 'root'
   group 'root'
@@ -59,7 +58,7 @@ template '/etc/php/5.6/fpm/php.ini' do
   notifies :restart, 'service[php-fpm]'
 end
 
-template '/etc/php/5.6/mods-available/opcache.ini' do
+template "/etc/php/#{node['php']['version']}/mods-available/opcache.ini" do
   source 'opcache.ini.erb'
   owner 'root'
   group 'root'
