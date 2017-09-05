@@ -103,7 +103,6 @@ directory '/var/www' do
   group 'sysadmin'
   mode '0775'
   action :create
-  not_if { ::File.directory?('/var/www') }
 end
 
 node['nginx']['sites'].each do |site|
