@@ -123,7 +123,6 @@ node['nginx']['sites'].each do |site|
       group 'root'
       mode '0775'
       action :create
-      not_if { ::File.directory?("#{node['nginx']['dir']}/ssl") }
     end
 
     file "#{node['nginx']['dir']}/ssl/#{site['name']}.crt" do
