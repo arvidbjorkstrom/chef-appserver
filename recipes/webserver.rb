@@ -42,8 +42,16 @@ package 'imagemagick'
 end
 
 # PHP FPM service
+service_provider = nil
+if  'ubuntu' == node['platform']
+  if Chef::VersionConstraint.new('>= 15.04').include?(node['platform_version'])
+    service_provider = Chef::Provider::Service::Systemd
+  elsif Chef::VersionConstraint.new('>= 12.04').include?(node['platform_version'])
+    service_provider = Chef::Provider::Service::Upstart
+  end
+end
 service 'php-fpm' do
-  provider ::Chef::Provider::Service::Upstart
+  provider service_provider
   service_name "php#{node['php']['version']}-fpm"
   supports enable: true, start: true, stop: true, restart: true
   # :reload doesnt work on ubuntu 14.04 because of a bug...
