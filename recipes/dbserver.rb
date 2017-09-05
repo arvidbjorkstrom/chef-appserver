@@ -8,7 +8,7 @@ mysql_client 'default' do
 end
 mysql_service 'default' do
   port '3306'
-  version '5.7'
+  version node['mysql']['version']
   initial_root_password node['mysql']['server_root_password']
   action [:create, :start]
 end
