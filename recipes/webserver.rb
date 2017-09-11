@@ -26,6 +26,9 @@ node['nodejs']['npm']['packages'].each do |npackage|
   nodejs_npm npackage
 end
 
+# NGINX install
+include_recipe 'nginx::server'
+
 # sudo add-apt-repository ppa:ondrej/php; sudo apt-get update
 apt_repository 'ondrej-php' do
   uri 'ppa:ondrej/php'
@@ -95,15 +98,11 @@ end
 # Install supervisor
 include_recipe 'supervisor'
 
-# NGINX install
-include_recipe 'nginx::server'
-
 directory '/var/www' do
   owner deploy_usr
   group 'sysadmin'
   mode '0775'
   action :create
-  not_if { ::File.directory?('/var/www') }
 end
 
 node['nginx']['sites'].each do |site|
@@ -124,7 +123,6 @@ node['nginx']['sites'].each do |site|
       group 'root'
       mode '0775'
       action :create
-      not_if { ::File.directory?("#{node['nginx']['dir']}/ssl") }
     end
 
     file "#{node['nginx']['dir']}/ssl/#{site['name']}.crt" do
@@ -154,7 +152,8 @@ node['nginx']['sites'].each do |site|
     'ssl_crt' => "#{node['nginx']['dir']}/ssl/#{site['name']}.crt",
     'ssl_key' => "#{node['nginx']['dir']}/ssl/#{site['name']}.key",
     'redirect-hosts' => site['redirect-hosts'],
-    'redirect-to' => site['redirect-to']
+    'redirect-to' => site['redirect-to'],
+    'fastcgi_pass' => "unix:/var/run/php/php#{node['php']['version']}-fpm.sock"
   }
   nginx_site site['name'] do # ~FC022
     listen '*:80'

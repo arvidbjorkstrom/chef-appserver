@@ -3,8 +3,15 @@
 # Recipe:: dbserver
 #
 
-include_recipe 'mysql::client'
-include_recipe 'mysql::server'
+mysql_client 'default' do
+  action :create
+end
+mysql_service 'default' do
+  port '3306'
+  version node['mysql']['version']
+  initial_root_password node['mysql']['server_root_password']
+  action [:create, :start]
+end
 
 mysql_command = "mysql -h'127.0.0.1' -u'#{node['mysql']['server_root_username']}' -p'#{node['mysql']['server_root_password']}'" # rubocop:disable LineLength
 

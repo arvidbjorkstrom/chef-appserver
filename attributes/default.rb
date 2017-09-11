@@ -17,6 +17,7 @@ default['authorization']['sudo']['passwordless'] = true
 default['mysql']['server_root_username'] = 'root'
 default['mysql']['server_root_password'] = 'YouShouldReplaceThis'
 default['mysql']['server_debian_password'] = 'YouShouldReplaceThis'
+default['mysql']['version'] = '5.7'
 default['mysql']['databases'] = []
 
 default['automysqlbackup']['mysql_dump_password'] = default['mysql']['server_root_password']

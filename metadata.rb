@@ -4,7 +4,7 @@ maintainer_email 'arvid@bjorkstrom.se'
 license          'MIT'
 description      'Installs/Configures appserver'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          '1.3.2'
+version          '1.4.0'
 
 recipe 'appserver', 'Installs and configures the server via internal recipes.'
 recipe 'appserver::dbserver', 'Internal recipe to setup mysql.'
@@ -19,7 +19,7 @@ depends 'chef-solo-search', '~>0.5.1'
 depends 'users', '~>1.7.0'
 depends 'sudo', '~>2.7.1'
 depends 'oh-my-zsh', '~>0.4.3'
-depends 'mysql', '~>5.4.4'
+depends 'mysql', '~> 8.0'
 depends 'automysqlbackup', '~> 2.0.1'
 depends 'nginx' # https://github.com/phlipper/chef-nginx
 depends 'compass' # https://github.com/arvidbjorkstrom/chef-compass
