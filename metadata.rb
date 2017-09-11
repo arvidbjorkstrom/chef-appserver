@@ -4,7 +4,7 @@ maintainer_email 'arvid@bjorkstrom.se'
 license          'MIT'
 description      'Installs/Configures appserver'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          '2.0.0'
+version          '1.4.0'
 
 recipe 'appserver', 'Installs and configures the server via internal recipes.'
 recipe 'appserver::dbserver', 'Internal recipe to setup mysql.'
