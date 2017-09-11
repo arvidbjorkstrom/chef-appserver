@@ -153,6 +153,7 @@ node['nginx']['sites'].each do |site|
     'ssl_key' => "#{node['nginx']['dir']}/ssl/#{site['name']}.key",
     'redirect-hosts' => site['redirect-hosts'],
     'redirect-to' => site['redirect-to']
+    'fastcgi_pass' => "unix:/var/run/php/php#{node['php']['version']}-fpm.sock"
   }
   nginx_site site['name'] do # ~FC022
     listen '*:80'
