@@ -5,6 +5,11 @@ license          'MIT'
 description      'Installs/Configures appserver'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          '1.4.0'
+issues_url 'https://github.com/arvidbjorkstrom/chef-appserver/issues'
+source_url 'http://github.com/arvidbjorkstrom/chef-appserver/releases/new'
+chef_version '12.10.24'
+
+supports 'ubuntu'
 
 recipe 'appserver', 'Installs and configures the server via internal recipes.'
 recipe 'appserver::dbserver', 'Internal recipe to setup mysql.'
