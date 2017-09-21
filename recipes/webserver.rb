@@ -166,7 +166,6 @@ node['nginx']['sites'].each do |site|
     template_cookbook site['template_cookbook']
     template_source site['template_source']
     action [:create, :enable]
-    not_if { ::File.exist?("#{node['nginx']['dir']}/sites-enabled/#{site['name']}") }
     notifies :restart, 'service[php-fpm]'
     notifies :restart, 'service[nginx]'
     notifies :sync, "git[Syncing git repository for #{site['name']}]"
