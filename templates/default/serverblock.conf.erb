@@ -8,10 +8,15 @@ server {
 server {
   listen 443 ssl;
   keepalive_timeout 70;
-  ssl_certificate     <%= @custom_data['ssl_crt'] %>;
-  ssl_certificate_key <%= @custom_data['ssl_key'] %>;
-  ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
-  ssl_ciphers         HIGH:!aNULL:!MD5;
+
+  ssl_session_cache         shared:SSL:40m;
+  ssl_session_timeout       4h;
+  ssl_certificate           <%= @custom_data['ssl_crt'] %>;
+  ssl_certificate_key       <%= @custom_data['ssl_key'] %>;
+  ssl_protocols             TLSv1 TLSv1.1 TLSv1.2;
+  ssl_prefer_server_ciphers on;
+  ssl_ciphers               "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS !RC4";
+
   server_name <%= @custom_data['redirect-hosts'] %>;
   return 301 https://<%= @custom_data['redirect-to'] %>$request_uri;
 }
@@ -22,10 +27,14 @@ server {
   <% if @custom_data && @custom_data['ssl'] -%>
   listen 443 ssl;
   keepalive_timeout 70;
-  ssl_certificate     <%= @custom_data['ssl_crt'] %>;
-  ssl_certificate_key <%= @custom_data['ssl_key'] %>;
-  ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
-  ssl_ciphers         HIGH:!aNULL:!MD5;
+
+  ssl_session_cache         shared:SSL:40m;
+  ssl_session_timeout       4h;
+  ssl_certificate           <%= @custom_data['ssl_crt'] %>;
+  ssl_certificate_key       <%= @custom_data['ssl_key'] %>;
+  ssl_protocols             TLSv1 TLSv1.1 TLSv1.2;
+  ssl_prefer_server_ciphers on;
+  ssl_ciphers               "EECDH+ECDSA+AESGCM EECDH+aRSA+AESGCM EECDH+ECDSA+SHA384 EECDH+ECDSA+SHA256 EECDH+aRSA+SHA384 EECDH+aRSA+SHA256 EECDH+aRSA+RC4 EECDH EDH+aRSA RC4 !aNULL !eNULL !LOW !3DES !MD5 !EXP !PSK !SRP !DSS !RC4";
   <% end -%>
   server_name <%= @host %>;
   root <%= @root %>;
