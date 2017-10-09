@@ -288,7 +288,7 @@ node['nginx']['sites'].each do |site|
   # Npm install without git
   execute "Npm install #{site['name']}" do
     cwd npm_path
-    command 'npm install'
+    command 'npm install --silent --no-optional'
     action :run
     user deploy_usr
     only_if { site['npm_install'] }
@@ -301,7 +301,7 @@ node['nginx']['sites'].each do |site|
   # Npm install triggered by git
   execute "Npm install #{site['name']} after git sync" do
     cwd npm_path
-    command 'npm install --silent'
+    command 'npm install --silent --no-optional'
     action :nothing
     user deploy_usr
     only_if { site['npm_install'] }
