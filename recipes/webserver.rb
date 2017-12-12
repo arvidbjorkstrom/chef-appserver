@@ -40,8 +40,13 @@ package "php#{node['php']['version']}"
 package 'imagemagick'
 
 # PHP plugins
-%w[-cli -mysql -curl -mcrypt -gd -imagick -fpm].each do |pkg|
-  package "php#{node['php']['version']}#{pkg}"
+%w[cli mysql curl mcrypt gd imagick fpm].each do |pkg|
+  package "php#{node['php']['version']}-#{pkg}"
+end
+
+# PHP additional plugins
+node['php']['plugins'].each do |pkg|
+  package "php#{node['php']['version']}-#{pkg}"
 end
 
 # PHP FPM service
