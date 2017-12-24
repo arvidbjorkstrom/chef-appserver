@@ -200,6 +200,7 @@ node['nginx']['sites'].each do |site|
   template "Create #{site['base_path']}/.env after git sync" do
     path "#{site['base_path']}/.env"
     source 'env.erb'
+    variables(site: site)
     owner deploy_usr
     group 'www-data'
     mode '0755'
@@ -211,6 +212,7 @@ node['nginx']['sites'].each do |site|
   template "Create #{site['base_path']}/.env" do
     path "#{site['base_path']}/.env"
     source 'env.erb'
+    variables(site: site)
     owner deploy_usr
     group 'www-data'
     mode '0755'
