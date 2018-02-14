@@ -248,7 +248,7 @@ node['nginx']['sites'].each do |site|
     action :nothing
     user deploy_usr
     only_if { site['artisan_migrate'] }
-    only_if { ::File.directory?(artisan_path) }
+    only_if { ::File.exist?(artisan_path) }
   end
 
   # Artisan migrate after git, when not running composer install
@@ -257,7 +257,7 @@ node['nginx']['sites'].each do |site|
     action :nothing
     user deploy_usr
     only_if { site['artisan_migrate'] }
-    only_if { ::File.directory?(artisan_path) }
+    only_if { ::File.exist?(artisan_path) }
     not_if { site['composer_install'] }
   end
 
@@ -267,7 +267,7 @@ node['nginx']['sites'].each do |site|
     action :run
     user deploy_usr
     only_if { site['artisan_migrate'] }
-    only_if { ::File.directory?(artisan_path) }
+    only_if { ::File.exist?(artisan_path) }
     only_if { ::File.exist?("#{node['nginx']['dir']}/sites-enabled/#{site['name']}") }
     not_if { site['composer_install'] }
     not_if { site['git'] }
