@@ -22,8 +22,7 @@ default['mysql']['databases'] = []
 
 # AutoMySQLbackup
 default['automysqlbackup']['mysql_dump_password'] = default['mysql']['server_root_password']
-default['automysqlbackup']['password'] = default['mysql']['server_root_password']
-default['automysqlbackup']['server'] = '127.0.0.1'
+default['automysqlbackup']['mysql_dump_host'] = '127.0.0.1'
 
 # NGINX
 default['nginx']['sites'] = []
