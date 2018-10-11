@@ -22,6 +22,7 @@ default['mysql']['databases'] = []
 
 # AutoMySQLbackup
 default['automysqlbackup']['mysql_dump_password'] = default['mysql']['server_root_password']
+default['automysqlbackup']['mysql_dump_usessl'] = 'no'
 default['automysqlbackup']['mysql_dump_host'] = '127.0.0.1'
 
 # NGINX
