@@ -73,7 +73,8 @@ node['mysql']['databases'].each do |db|
 end
 
 # Auto MySQL Backup
-package 'automysqlbackup'
+#package 'automysqlbackup'
+include_recipe 'automysqlbackup'
 
 # Redis
 if node['redisio']['install']
